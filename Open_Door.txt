@@ -1,0 +1,65 @@
+using UnityEngine;
+
+public class CameraOpenDoor : MonoBehaviour
+{
+    [Tooltip("Drag in your Player GameObject (the one with PlayerController attached).")]
+    public PlayerController playerController;
+
+    [Tooltip("How far (in world units) the player can be from the door to interact.")]
+    public float distanceOpen = 3f;
+
+    [Tooltip("A UI element (e.g. Text or Canvas panel) that says ‘Press E to open’.")]
+    public GameObject textPrompt;
+
+    void Update()
+    {
+        if (playerController == null || playerController.cameraTransform == null)
+            return; // nothing to do until references are set
+
+        // Ray origin & direction come from the cameraTransform inside PlayerController
+        Vector3 rayOrigin = playerController.cameraTransform.position;
+        Vector3 rayDir = playerController.cameraTransform.forward;
+
+        RaycastHit hit;
+        if (Physics.Raycast(rayOrigin, rayDir, out hit, distanceOpen))
+        {
+            // Try to find a Door component on the hit object or any of its parents
+            Door doorScript = hit.transform.GetComponentInParent<Door>();
+            if (doorScript != null)
+            {
+                // Show the “Press E” prompt
+                if (textPrompt != null)
+                    textPrompt.SetActive(true);
+
+                // If player presses E, toggle the door
+                if (Input.GetKeyDown(KeyCode.E))
+                    doorScript.OpenDoor();
+            }
+            else
+            {
+                // Hit something, but not a door → hide prompt
+                if (textPrompt != null)
+                    textPrompt.SetActive(false);
+            }
+        }
+        else
+        {
+            // Ray didn’t hit anything within range → hide prompt
+            if (textPrompt != null)
+                textPrompt.SetActive(false);
+        }
+    }
+
+    // (Optional) to visualize the ray in the Scene view while playing:
+    void OnDrawGizmosSelected()
+    {
+        if (playerController != null && playerController.cameraTransform != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(
+                playerController.cameraTransform.position,
+                playerController.cameraTransform.position + playerController.cameraTransform.forward * distanceOpen
+            );
+        }
+    }
+}

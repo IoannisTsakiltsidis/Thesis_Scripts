@@ -1,0 +1,65 @@
+import bpy
+import os
+import shutil
+
+# === CONFIGURE PATHS ===
+export_path = r"F:/thesis/Assets/3D Models/"
+texture_path = r"F:/thesis/Assets/3D Models/Textures_External"
+
+# Create directories if they don't exist
+os.makedirs(export_path, exist_ok=True)
+os.makedirs(texture_path, exist_ok=True)
+
+# Apply transforms to selected object(s)
+bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+
+# Export FBX
+bpy.ops.export_scene.fbx(
+    filepath=os.path.join(export_path, "YourModel.fbx"),
+    use_selection=True,
+    apply_unit_scale=True,
+    apply_scale_options='FBX_SCALE_ALL',
+    object_types={'MESH'},
+    bake_space_transform=True,
+    axis_forward='-Z',
+    axis_up='Y',
+    path_mode='COPY',
+    embed_textures=True
+)
+
+# === EXPORT TEXTURES ===
+# Copy external image files or save embedded image buffers
+exported = set()
+allowed_exts = ('.png', '.jpg', '.jpeg', '.tga', '.bmp', '.exr')
+for image in bpy.data.images:
+    # Skip images without data
+    if not image.has_data:
+        continue
+
+    # Determine filename and extension
+    name = image.name
+    ext = os.path.splitext(image.filepath)[1].lower() if image.filepath else ''
+    if ext not in allowed_exts:
+        # default to .png if unknown
+        ext = '.png'
+    filename = f"{os.path.splitext(name)[0]}{ext}"
+
+    if filename in exported:
+        continue
+
+    dest = os.path.join(texture_path, filename)
+    try:
+        # If original file exists on disk, copy it
+        if image.filepath and os.path.isfile(bpy.path.abspath(image.filepath)):
+            src = bpy.path.abspath(image.filepath)
+            shutil.copy2(src, dest)
+        else:
+            # Save embedded image buffer
+            image.filepath_raw = dest
+            image.file_format = 'PNG'
+            image.save()
+        exported.add(filename)
+    except Exception as e:
+        print(f"Failed to export texture {filename}: {e}")
+
+print(f"Exported textures: {exported}")

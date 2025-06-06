@@ -1,0 +1,63 @@
+using UnityEngine;
+
+[RequireComponent(typeof(AudioSource))]
+public class Door : MonoBehaviour
+{
+    [Tooltip("Starts closed (unchecked).  Check this box to begin in an open state.")]
+    public bool open = false;
+
+    [Tooltip("How quickly the door rotates to the open/closed angle (higher = faster).")]
+    public float smooth = 1.0f;
+
+    [Tooltip("Angle (in degrees) when the door is fully open.  Negative or positive on Y-axis.")]
+    public float openAngle = -90f;
+
+    [Tooltip("Angle (in degrees) when the door is fully closed.  Usually 0.")]
+    public float closeAngle = 0f;
+
+    [Tooltip("Drag in the AudioClip to play when opening the door.")]
+    public AudioClip openDoorSound;
+
+    [Tooltip("Drag in the AudioClip to play when closing the door.")]
+    public AudioClip closeDoorSound;
+
+    private AudioSource audioSource;
+    private float targetAngle;
+
+    void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+        // Set the initial target angle based on the starting 'open' boolean
+        targetAngle = open ? openAngle : closeAngle;
+        transform.localRotation = Quaternion.Euler(0f, targetAngle, 0f);
+    }
+
+    void Update()
+    {
+        // Each frame, smoothly interpolate toward the desired angle
+        float desired = open ? openAngle : closeAngle;
+        Quaternion targetRot = Quaternion.Euler(0f, desired, 0f);
+        transform.localRotation = Quaternion.Slerp(
+            transform.localRotation,
+            targetRot,
+            Time.deltaTime * 5f * smooth
+        );
+    }
+
+    public void OpenDoor()
+    {
+        // Toggle state
+        open = !open;
+
+        // Play the correct sound (if assigned)
+        if (audioSource != null)
+        {
+            AudioClip clipToPlay = open ? openDoorSound : closeDoorSound;
+            if (clipToPlay != null)
+            {
+                audioSource.clip = clipToPlay;
+                audioSource.Play();
+            }
+        }
+    }
+}

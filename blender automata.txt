@@ -1,0 +1,74 @@
+import bpy
+import os
+import shutil
+
+# === CONFIGURE PATHS ===
+export_base = r"F:/thesis/Assets/3D Models/Models_External"
+textures_base = r"F:/thesis/Assets/3D Models/Textures_External"
+
+# Create directories if they don't exist
+os.makedirs(export_base, exist_ok=True)
+os.makedirs(textures_base, exist_ok=True)
+
+# Ensure at least one object is selected
+selected_objs = bpy.context.selected_objects
+if not selected_objs:
+    raise RuntimeError("No object selected for export. Please select all parts of your prop.")
+
+# Apply transforms to all selected objects
+for obj in selected_objs:
+    bpy.context.view_layer.objects.active = obj
+    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+
+# Determine model name: use first selected object's collection name if available, else object name
+first_obj = selected_objs[0]
+if first_obj.users_collection:
+    model_name = first_obj.users_collection[0].name
+else:
+    model_name = first_obj.name
+
+# Prepare FBX export
+# Deselect all, then select only the chosen objects
+bpy.ops.object.select_all(action='DESELECT')
+for obj in selected_objs:
+    obj.select_set(True)
+bpy.context.view_layer.objects.active = selected_objs[0]
+
+fbx_path = os.path.join(export_base, f"{model_name}.fbx")
+# Export all selected objects as a single FBX
+bpy.ops.export_scene.fbx(
+    filepath=fbx_path,
+    use_selection=True,
+    apply_unit_scale=True,
+    apply_scale_options='FBX_SCALE_ALL',
+    object_types={'MESH'},
+    bake_space_transform=True,
+    axis_forward='-Z',
+    axis_up='Y',
+    path_mode='COPY',
+    embed_textures=True
+)
+
+# Export textures used in the scene to textures_base
+exported = set()
+for image in bpy.data.images:
+    # If image is packed inside the .blend, unpack it
+    if image.packed_file:
+        try:
+            image.unpack(method='USE_ORIGINAL')
+        except:
+            image.unpack(method='WRITE_LOCAL')
+    # Resolve absolute file path
+    try:
+        src_path = bpy.path.abspath(image.filepath)
+    except:
+        continue
+    if not os.path.isfile(src_path):
+        continue
+    ext = os.path.splitext(src_path)[1].lower()
+    if ext in ('.png', '.jpg', '.jpeg', '.tga', '.bmp', '.exr'):
+        name = os.path.basename(src_path)
+        dest_path = os.path.join(textures_base, name)
+        if name not in exported:
+            shutil.copy2(src_path, dest_path)
+            exported.add(name)
