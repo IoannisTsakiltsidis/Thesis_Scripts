@@ -3,7 +3,7 @@ import os
 import shutil
 
 # === CONFIGURE PATHS ===
-export_path = r"F:/thesis/Assets/3D Models/"
+export_path = r"F:/thesis/Assets/3D Models/Models_External"
 texture_path = r"F:/thesis/Assets/3D Models/Textures_External"
 
 # Create directories if they don't exist
