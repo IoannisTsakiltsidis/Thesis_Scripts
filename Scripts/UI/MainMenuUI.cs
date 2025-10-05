@@ -1,37 +1,62 @@
-// Assets/Scripts/UI/MainMenuUI.cs
+using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+[DisallowMultipleComponent]
 public class MainMenuUI : MonoBehaviour
 {
+    [Header("Buttons")]
+    public Button startButton;
     public Button continueButton;
+    public Button settingsButton;
+    public Button quitButton;
+
+    [Header("Panels (optional)")]
+    public GameObject settingsPanel;
+
+    [Header("Focus (optional)")]
+    public Selectable defaultFocused;      // set to START for keyboard/controller Enter
+
+    [Header("Background (optional)")]
+    public MenuBackgroundController bg;    // assign the BG_Controller with the script above
 
     void Awake()
     {
-        if (continueButton)
-            continueButton.interactable = SaveSystem.HasSave();
+        if (continueButton) continueButton.interactable = SaveSystem.HasSave();
+
+        // Wire events (or wire in Inspector if you prefer)
+        if (startButton) startButton.onClick.AddListener(StartNewGame);
+        if (continueButton) continueButton.onClick.AddListener(ContinueGame);
+        if (settingsButton) settingsButton.onClick.AddListener(OpenSettings);
+        if (quitButton) quitButton.onClick.AddListener(ExitGame);
     }
 
-    // Wire to Start button
+    void OnEnable()
+    {
+        if (defaultFocused) defaultFocused.Select();
+    }
+
     public void StartNewGame()
     {
-        // Your very first scene & spawn:
-        GameSession.SetPendingSpawnId(SpawnIds.From_Start);
-        SceneManager.LoadScene(Scenes.CorridorPass1); // or your real start
+        StartCoroutine(PlayAndLoad(Scenes.CorridorPass1, SpawnIds.From_Start));
     }
 
-    // Wire to Continue button
     public void ContinueGame()
     {
         var data = SaveSystem.Load();
         if (data == null) return;
-
-        GameSession.SetPendingSpawnId(data.spawnId);   // handoff to spawn placer
-        SceneManager.LoadScene(data.sceneName);
+        StartCoroutine(PlayAndLoad(data.sceneName, data.spawnId));
     }
 
-    // Wire to Exit button
+    private IEnumerator PlayAndLoad(string sceneName, string spawnId)
+    {
+        if (bg) yield return bg.FadeOut(0.4f); // optional polish
+        GameFlowManager.I.LoadWithLoading(sceneName, spawnId);
+    }
+
+    public void OpenSettings() { if (settingsPanel) settingsPanel.SetActive(true); }
+    public void CloseSettings() { if (settingsPanel) settingsPanel.SetActive(false); }
+
     public void ExitGame()
     {
 #if UNITY_EDITOR

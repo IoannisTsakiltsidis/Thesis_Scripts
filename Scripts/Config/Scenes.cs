@@ -6,6 +6,7 @@ public static class Scenes
     public const string CorridorPass3 = "Corridor_Pass3";
     public const string STREET = "STREET";
     public const string FOREST = "FOREST";
+    public const string END = "END";
 }
 
 public static class SpawnIds
