@@ -1,0 +1,2313 @@
+    %============================= main.tex =============================
+\begin{filecontents}{\jobname.bib}
+@book{knuth1990texbook,
+  author    = {Donald E. Knuth},
+  title     = {{The \TeX\ book}},
+  year      = {1990},
+  publisher = {Addison-Wesley}
+}
+\end{filecontents}
+
+\documentclass[12pt,twoside]{report}
+
+%================ Geometry and Spacing ==================
+\usepackage[a4paper,left=3.17cm,right=3.17cm,top=2.54cm,bottom=2.54cm]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+%================ Font and Language =====================
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage{greek}
+\setotherlanguage{english}
+\newfontfamily\greekfont{Times New Roman} % εγκατεστημένη στο σύστημά σου
+\newfontfamily\englishfont{Arial}         % εγκατεστημένη στο σύστημά σου
+
+%================ Useful Packages =======================
+\usepackage{csquotes}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage[hidelinks]{hyperref}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+\lstdefinestyle{code}{
+  language=[Sharp]C,
+  basicstyle=\ttfamily\small,
+  numbers=left, numberstyle=\tiny, numbersep=6pt,
+  breaklines=true, frame=lines,
+  keywordstyle=\bfseries\color{blue!60!black},
+  commentstyle=\itshape\color{gray!65},
+  stringstyle=\color{orange!60!black}
+}
+%================ Section Title Formatting ===============
+\usepackage{titlesec}
+% Εμφάνιση "ΚΕΦΑΛΑΙΟ N: Τίτλος"
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries\fontsize{16}{19}\selectfont}
+  {}
+  {0pt}
+  {\filright \MakeUppercase{Κεφάλαιο \thechapter:} \\}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt}
+
+\titleformat{\section}
+  {\normalfont\bfseries\fontsize{14}{17}\selectfont}
+  {\thesection}{1em}{}
+
+%================ Header / Footer ========================
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[LE,RO]{\thepage}
+
+%================ Bibliography ===========================
+\usepackage{csquotes}
+\usepackage[style=apa,backend=biber]{biblatex}
+\DeclareLanguageMapping{english}{english-apa}
+\addbibresource{thesibib.bib}
+%================ Document ===============================
+\begin{document}
+
+%---------------- Title Page -----------------------------
+\begin{titlepage}
+  \centering
+  {\LARGE Πανεπιστήμιο Πατρών}\\[0.5cm]
+  {\large Τμήμα Διοικητικής Επιστήμης και Τεχνολογίας}\\[1cm]
+  {\huge \bfseries Διαδικασία Ανάπτυξης Παιχνιδιών στην Unity 6: Πιλοτική σχεδίαση και υλοποίηση παιχνιδιού με σύγχρονες τεχνολογίες.}\\[1cm]
+  {\Large Υποψήφιος: Ιωάννης Τσακιλτσίδης (ΑΜ:1092069)}\\[0.5cm]
+  {\Large Επιβλέπων/-ουσα: Dr. Ρήγκου Μαρία}\\[1cm]
+  {\Large Πάτρα, 07/10/2025}
+  \vfill
+\end{titlepage}
+
+%---------------- Abstracts ------------------------------
+\chapter*{Περίληψη}
+\addcontentsline{toc}{chapter}{Περίληψη}
+Η παρούσα πτυχιακή εργασία εξετάζει τη διαδικασία ανάπτυξης ενός
+βιντεοπαιχνιδιού τύπου \textit{walking simulator} με τη χρήση της μηχανής
+Unity 6. Στόχος της είναι η πιλοτική σχεδίαση και υλοποίηση ενός
+παιχνιδιού που αξιοποιεί σύγχρονες τεχνολογίες γραφικών και 3D
+παραγωγής, ώστε να αναδειχθούν οι δυνατότητες και οι προκλήσεις που
+αντιμετωπίζει ένας δημιουργός σε ακαδημαϊκό αλλά και επαγγελματικό
+πλαίσιο.
+
+Η ανάπτυξη του παιχνιδιού βασίστηκε σε τρία διαφορετικά περιβάλλοντα:
+ένα εσωτερικό βιομηχανικό σκηνικό (corridor), έναν αστικό δρόμο με
+φωτισμό και εφέ βασισμένα στο HDRP, και ένα φυσικό περιβάλλον δάσους με
+χρήση φωτογραμμετρίας και εργαλείων δημιουργίας υφών. Στο επίπεδο του
+δρόμου παρουσιάζεται ένας δευτερεύων χαρακτήρας, ο οποίος λειτουργεί ως
+επίδειξη τεχνολογιών αιχμής: αξιοποιήθηκαν τεχνικές τεχνητής νοημοσύνης
+και 3D σαρώσεις για τη δημιουργία ρεαλιστικού προσώπου, καθώς και AI
+voice acting για τη φωνητική του απόδοση.
+
+Η εργασία εστιάζει τόσο σε τεχνικά ζητήματα (φωτισμός, βελτιστοποίηση,
+απόδοση σε διαφορετικό υλικό  π.χ. RTX GPU), όσο και σε ζητήματα
+σχεδιασμού χρηστικής εμπειρίας, αφήγησης και ατμόσφαιρας. Μέσα από την
+υλοποίηση, καταδεικνύεται η αξία της Unity 6 ως πλατφόρμας ανάπτυξης
+υψηλής πιστότητας, αλλά και οι περιορισμοί που προκύπτουν κατά την
+παραγωγή ρεαλιστικού περιεχομένου σε πανεπιστημιακό έργο. Συνολικά, η
+εργασία αποτελεί μια πιλοτική μελέτη που συνδυάζει θεωρία και πράξη,
+παρουσιάζοντας μια ολοκληρωμένη διαδικασία ανάπτυξης παιχνιδιού με
+σύγχρονες τεχνολογίες.
+
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+This thesis explores the process of developing a walking simulator video
+game using the Unity 6 engine. The aim is to design and implement a pilot
+game project that demonstrates the integration of modern graphical
+technologies and 3D production workflows, while highlighting the
+opportunities and challenges faced by a developer in both academic and
+professional contexts.
+
+The game development focused on three distinct environments: an
+industrial interior corridor, an urban street scene with High Definition
+Render Pipeline (HDRP) lighting and effects, and a forest environment
+built with photogrammetry and texture generation tools. Within the street
+scene, a secondary character is introduced as a technology showcase,
+featuring artificial intelligence and 3D scanning techniques for the
+creation of a realistic face, combined with AI-based voice acting for its
+speech performance.
+
+The project addresses both technical issues (lighting, optimization, and
+performance on different hardware such as RTX GPUs) and design aspects
+related to user experience, narrative, and atmosphere. Through the
+implementation, the study demonstrates the capabilities of Unity 6  as a high-fidelity development platform, while also pointing out the
+limitations and constraints of producing realistic content within a
+university-level project. Overall, the thesis offers a pilot study that
+combines theory and practice, presenting a complete workflow for game
+development using state-of-the-art technologies.
+
+%---------------- Table of Contents ----------------------
+\tableofcontents
+\cleardoublepage
+
+%---------------- Acknowledgments (optional) -------------
+\chapter*{Ευχαριστίες}
+\addcontentsline{toc}{chapter}{Ευχαριστίες}
+Θα ήθελα να εκφράσω τις θερμές μου ευχαριστίες σε όλους όσοι συνέβαλαν
+στην ολοκλήρωση της παρούσας πτυχιακής εργασίας. Πρώτα και πάνω απ’ όλα,
+ευχαριστώ την επιβλέπουσα καθηγήτριά μου, Δρ. Μαρία Ρήγκου, για την
+ευκαιρία που μου έδωσε να ασχοληθώ με το συγκεκριμένο αντικείμενο, καθώς
+και για την καθοδήγηση και την πολύτιμη βοήθειά της σε όλη τη διάρκεια
+της έρευνας και της υλοποίησης.
+
+Ιδιαίτερες ευχαριστίες οφείλω στους δικούς μου ανθρώπους για τη στήριξη,
+την κατανόηση και την υπομονή τους, που αποτέλεσαν θεμέλιο για να
+ολοκληρώσω το έργο αυτό. Ένα ξεχωριστό ευχαριστώ στις γυναίκες της ζωής
+μου, —τη μητέρα μου, τις θείες μου και τις φίλες μου— οι οποίες με διαμόρφωσαν ως άνθρωπο και με ενίσχυσαν να σταθώ αντάξιος των προκλήσεων που αντιμετώπισα.
+
+
+%================ Chapters ===============================
+
+%---------------- ΚΕΦΑΛΑΙΟ 1 ----------------------------
+\chapter{Εισαγωγή}
+\section{Αντικείμενο και σημασία της πτυχιακής}
+Αντικείμενο της παρούσας πτυχιακής εργασίας είναι η ανάπτυξη ενός
+πιλοτικού βιντεοπαιχνιδιού τύπου \textit{walking simulator}, με χρήση
+της μηχανής Unity 6 και ενσωμάτωση σύγχρονων τεχνολογιών γραφικών και
+3D παραγωγής. Η επιλογή του συγκεκριμένου θέματος συνδέεται με την
+αυξανόμενη σημασία των ψηφιακών παιχνιδιών όχι μόνο ως μέσο ψυχαγωγίας,
+αλλά και ως αντικείμενο τεχνολογικής, καλλιτεχνικής και ερευνητικής
+προσέγγισης.
+
+Η εργασία επιδιώκει να αναδείξει τις δυνατότητες που παρέχει η Unity 6
+για την ανάπτυξη περιβαλλόντων υψηλής πιστότητας με αξιοποίηση τεχνικών
+όπως το High Definition Render Pipeline (HDRP), η φωτογραμμετρία και η
+δημιουργία ρεαλιστικών χαρακτήρων με τεχνητή νοημοσύνη. Η σημασία της
+πτυχιακής έγκειται αφενός στη συμβολή της στην κατανόηση και παρουσίαση
+σύγχρονων εργαλείων ανάπτυξης παιχνιδιών, και αφετέρου στη δυνατότητά
+της να αποτελέσει πρακτικό οδηγό για μελλοντικούς φοιτητές και νέους
+δημιουργούς που ενδιαφέρονται για το πεδίο της αλληλεπιδραστικής
+ψηφιακής αφήγησης.
+\section{Σκοπός και στόχοι}
+Κεντρικός σκοπός της παρούσας πτυχιακής εργασίας είναι η πιλοτική
+σχεδίαση και υλοποίηση ενός βιντεοπαιχνιδιού τύπου \textit{walking
+simulator}, το οποίο αξιοποιεί σύγχρονες τεχνολογίες ανάπτυξης
+γραφικών, τρισδιάστατης αναπαράστασης και αλληλεπίδρασης, με στόχο την
+παρουσίαση μιας ολοκληρωμένης διαδικασίας παραγωγής παιχνιδιού στο
+πλαίσιο της μηχανής Unity 6.
+
+Για την επίτευξη του σκοπού αυτού, τέθηκαν οι ακόλουθοι επιμέρους
+στόχοι:
+\begin{itemize}
+  \item Η αποτύπωση της τρέχουσας κατάστασης των διαθέσιμων τεχνολογιών
+  που χρησιμοποιούνται στη βιομηχανία και την έρευνα γύρω από την
+  ανάπτυξη βιντεοπαιχνιδιών, με έμφαση σε τεχνικές γραφικών, φωτογραμμετρίας
+  και τεχνητής νοημοσύνης.
+  \item Η μελέτη και αξιοποίηση του \textit{High Definition Render
+  Pipeline (HDRP)} της Unity 6 για την παραγωγή ρεαλιστικού φωτισμού και
+  γραφικών.
+  \item Η δημιουργία τρισδιάστατων περιβαλλόντων με χρήση φωτογραμμετρίας
+  και εργαλείων δημιουργίας υφών.
+  \item Η ανάπτυξη και παρουσίαση ενός δευτερεύοντος χαρακτήρα με
+  αξιοποίηση τεχνικών τεχνητής νοημοσύνης, 3D σαρώσεων για τη δημιουργία
+  προσώπου και \textit{AI voice acting}.
+  \item Η εφαρμογή μεθόδων βελτιστοποίησης και ελέγχου απόδοσης ώστε το
+  παιχνίδι να είναι λειτουργικό σε διαφορετικές κατηγορίες υλικού
+  (hardware).
+  \item Η τεκμηρίωση της διαδικασίας ανάπτυξης, με στόχο τη δημιουργία
+  ενός παραδείγματος-οδηγού για μελλοντικούς φοιτητές και ερευνητές στον
+  χώρο του ψηφιακού παιχνιδιού.
+\end{itemize}
+\section{Ερευνητικά ερωτήματα}
+Η εργασία επιχειρεί να απαντήσει σε μια σειρά από ερευνητικά
+ερωτήματα, τα οποία συνδέονται άμεσα με το αντικείμενο και τους
+επιμέρους στόχους που τέθηκαν:
+
+\begin{itemize}
+  \item Ποιες είναι οι κυριότερες τεχνολογίες που αξιοποιούνται σήμερα
+  στη βιομηχανία και στην ερευνητική κοινότητα για την ανάπτυξη
+  βιντεοπαιχνιδιών υψηλής πιστότητας;
+  \item Σε ποιο βαθμό το \textit{High Definition Render Pipeline (HDRP)}
+  της Unity 6 μπορεί να υποστηρίξει ρεαλιστικό φωτισμό και γραφικά σε
+  ένα πιλοτικό έργο;
+  \item Ποιες είναι οι δυνατότητες και οι περιορισμοί της φωτογραμμετρίας
+  για τη δημιουργία ρεαλιστικών περιβαλλόντων σε ακαδημαϊκό πλαίσιο;
+  \item Πώς μπορούν τεχνικές τεχνητής νοημοσύνης, όπως η δημιουργία
+  προσώπου μέσω 3D σάρωσης και η χρήση \textit{AI voice acting}, να
+  ενσωματωθούν σε έναν δευτερεύοντα χαρακτήρα παιχνιδιού;
+  \item Ποιες μέθοδοι βελτιστοποίησης είναι πιο κατάλληλες ώστε το έργο
+  να είναι λειτουργικό σε διαφορετικές κατηγορίες υλικού (π.χ. mid-range
+  και high-end GPUs);
+  \item Πώς μπορεί να τεκμηριωθεί η διαδικασία ανάπτυξης ενός
+  πανεπιστημιακού παιχνιδιού με τρόπο που να λειτουργεί ως οδηγός για
+  μελλοντικούς φοιτητές και ερευνητές;
+  \item Με ποιον τρόπο ο σχεδιασμός του \textit{User Interface (UI)}
+  επηρεάζει την εμπειρία του χρήστη, και πώς η ανάλυση των διαφορετικών
+  μορφών διεπαφής (diegetic, non-diegetic, spatial, meta) μπορεί να
+  συμβάλει στην κατανόηση και βελτίωση της αλληλεπίδρασης σε ένα πιλοτικό
+  παιχνίδι;
+\end{itemize}
+\section{Μεθοδολογική προσέγγιση}
+Η μεθοδολογική προσέγγιση της παρούσας εργασίας βασίζεται σε έναν
+συνδυασμό θεωρητικής έρευνας και πρακτικής υλοποίησης. Αρχικά, έγινε
+βιβλιογραφική ανασκόπηση προκειμένου να αποτυπωθεί η τρέχουσα κατάσταση
+των διαθέσιμων τεχνολογιών στη βιομηχανία και την ερευνητική κοινότητα,
+με έμφαση σε ζητήματα γραφικών, φωτογραμμετρίας, τεχνητής νοημοσύνης και
+σχεδιασμού διεπαφών χρήστη. Η ανασκόπηση αυτή αποτέλεσε τη βάση για τον
+καθορισμό των ερευνητικών ερωτημάτων και την επιλογή των τεχνολογιών που
+ενσωματώθηκαν στο έργο.
+
+Στη συνέχεια, ακολουθήθηκε μια πειραματική-εφαρμοστική μεθοδολογία,
+με κεντρικό άξονα την ανάπτυξη ενός πιλοτικού βιντεοπαιχνιδιού τύπου
+\textit{walking simulator} στην πλατφόρμα Unity 6. Η ανάπτυξη του έργου
+έγινε σε διακριτά στάδια:
+\begin{itemize}
+  \item Σχεδίαση και υλοποίηση τριών διαφορετικών περιβαλλόντων
+  (corridor, αστικός δρόμος, δάσος) με χρήση HDRP και φωτογραμμετρίας.
+  \item Ανάπτυξη ενός δευτερεύοντος χαρακτήρα ως επίδειξη τεχνολογιών AI,
+  3D σάρωσης προσώπου και \textit{AI voice acting}.
+  \item Πειραματισμός με διαφορετικές μορφές διεπαφής χρήστη
+  (diegetic, non-diegetic, spatial, meta) και αξιολόγηση της επίδρασής
+  τους στην εμπειρία του παίκτη.
+  \item Εφαρμογή τεχνικών βελτιστοποίησης και δοκιμές απόδοσης σε
+  διαφορετικά επίπεδα υλικού (π.χ. μεσαίας και υψηλής κατηγορίας GPUs).
+\end{itemize}
+
+Η μεθοδολογική αυτή επιλογή επιτρέπει αφενός την πρακτική επιβεβαίωση
+των ερευνητικών ερωτημάτων μέσω της υλοποίησης, και αφετέρου τη
+συγκριτική ανάλυση των δυνατοτήτων και περιορισμών των τεχνολογιών που
+χρησιμοποιούνται. Με αυτόν τον τρόπο, η εργασία συνδυάζει τη θεωρητική
+μελέτη με την πρακτική εφαρμογή, προσφέροντας ένα ολοκληρωμένο παράδειγμα
+για την ανάπτυξη βιντεοπαιχνιδιών με σύγχρονα εργαλεία. 
+
+Επιπλέον, στο πλαίσιο της μεθοδολογικής προσέγγισης, σχεδιάστηκε και
+διανεμήθηκε ένα ερωτηματολόγιο με στόχο την αξιολόγηση της εμπειρίας
+χρήστη και των διαφορετικών μορφών διεπαφής (diegetic, non-diegetic,
+spatial, meta). Τα αποτελέσματα της έρευνας αυτής παρουσιάζονται και
+αναλύονται στο αντίστοιχο κεφάλαιο που αφορά τον σχεδιασμό και την
+αξιολόγηση του \textit{User Interface (UI)}.
+
+\section{Δομή της πτυχιακής εργασίας}
+Η εργασία αποτελείται από εννέα βασικά κεφάλαια καθώς και τρία
+παραρτήματα.
+
+Στο \textbf{Κεφάλαιο 1: Εισαγωγή} παρουσιάζονται το αντικείμενο και η
+σημασία της πτυχιακής, ο σκοπός και οι στόχοι, τα ερευνητικά ερωτήματα,
+η μεθοδολογική προσέγγιση και η δομή του κειμένου.
+
+Το \textbf{Κεφάλαιο 2: Θεωρητικό Υπόβαθρο και Σύγχρονες Τεχνολογίες}
+περιλαμβάνει βιβλιογραφική ανασκόπηση και ανάλυση της τρέχουσας
+κατάστασης στη βιομηχανία και την έρευνα, με αναφορά στη Unity 6, το
+HDRP, τις τεχνολογίες animation, τη φωτογραμμετρία και τις μεθόδους
+οπτικοποίησης και βελτιστοποίησης.
+
+Στο \textbf{Κεφάλαιο 3: Οργάνωση Ανάπτυξης και Τεχνολογικός Σχεδιασμός}
+παρουσιάζεται η επιλογή εργαλείων, οι προγραμματιστικές αποφάσεις, η
+οργάνωση των assets.
+
+Το \textbf{Κεφάλαιο 4: Υλοποίηση Παιχνιδιού – Σκηνή Πόλης} περιγράφει τη
+διαδικασία σχεδίασης της σκηνής δρόμου, τον δευτερεύοντα χαρακτήρα, τη
+χρήση HDRP για φωτισμό και καιρικά εφέ, καθώς και τις τεχνικές
+βελτιστοποίησης.
+
+Στο \textbf{Κεφάλαιο 5: Υλοποίηση Παιχνιδιού – Σκηνή Δάσους}
+παρουσιάζεται η ανάπτυξη του φυσικού τοπίου με Unity Terrain, HDRP
+Foliage και φωτογραμμετρία.
+
+Το \textbf{Κεφάλαιο 6: Σχεδιασμός Διεπαφής Χρήστη και Εμπειρία Παίκτη}
+εξετάζει τις αρχές UI/UX στα παιχνίδια, την υλοποίηση του UI και την
+αξιολόγηση μέσω ερωτηματολογίου.
+
+Στο \textbf{Κεφάλαιο 7: Ψηφιακοί Χαρακτήρες και Animation Pipeline}
+αναλύεται η δημιουργία του προσώπου, το rigging, το animation με
+Marvelous Designer και motion capture, καθώς και η χρήση AI για voice
+acting.
+
+Το \textbf{Κεφάλαιο 8: Αποτελέσματα και Συζήτηση} περιλαμβάνει την
+αξιολόγηση των σκηνών, την απόδοση και τα benchmarks, τις τεχνολογικές
+επιλογές και τα προβλήματα που αντιμετωπίστηκαν.
+
+Τέλος, στο \textbf{Κεφάλαιο 9: Συμπεράσματα και Μελλοντική Έρευνα}
+παρουσιάζονται τα βασικά συμπεράσματα, οι δυνατότητες βελτίωσης και
+επέκτασης, καθώς και οι πιθανές εφαρμογές σε μελλοντική έρευνα.
+
+Τα \textbf{Παραρτήματα} περιλαμβάνουν κώδικα και ρυθμίσεις (Παράρτημα Α),
+screenshots και pipelines φωτογραμμετρίας (Παράρτημα Β), καθώς και
+συνδέσμους σε διαδικτυακές πηγές (Παράρτημα Γ).
+
+%---------------- ΚΕΦΑΛΑΙΟ 2 ----------------------------
+\chapter{Θεωρητικό Υπόβαθρο και Σύγχρονες Τεχνολογίες}
+\section{Ανάπτυξη παιχνιδιών με Unity 6}
+Η Unity αποτελεί μία από τις πιο διαδεδομένες μηχανές ανάπτυξης παιχνιδιών παγκοσμίως, με παρουσία σε ένα ευρύ φάσμα εφαρμογών, από ανεξάρτητες παραγωγές (\textit{indie games}) έως και μεγάλους εμπορικούς τίτλους. Η δημοτικότητά της οφείλεται σε μεγάλο βαθμό στη φιλοσοφία του \textit{multi-platform development}, η οποία επιτρέπει στους δημιουργούς να αναπτύσσουν μία εφαρμογή και να την εξάγουν εύκολα σε πολλαπλές πλατφόρμες, όπως προσωπικούς υπολογιστές, κονσόλες, κινητές συσκευές (iOS, Android), αλλά και συστήματα εικονικής και επαυξημένης πραγματικότητας (VR/AR). Αυτή η ευελιξία την έχει καταστήσει βασικό εργαλείο για στούντιο όλων των μεγεθών, ενώ η εκτενής κοινότητα χρηστών και το οικοσύστημα εργαλείων του \textit{Asset Store} συμβάλλουν στη συνεχή εξέλιξή της.
+
+Ιστορικά, η Unity εισήχθη το 2005 με στόχο να προσφέρει ένα προσιτό και ευέλικτο περιβάλλον ανάπτυξης για μικρές ομάδες προγραμματιστών. Με την πάροδο του χρόνου, η μηχανή εξελίχθηκε σημαντικά, εισάγοντας πιο προηγμένα γραφικά χαρακτηριστικά, νέα rendering pipelines και ενσωματώνοντας λειτουργίες που μέχρι τότε ήταν διαθέσιμες μόνο σε ακριβότερες και πιο εξειδικευμένες πλατφόρμες. Η μετάβαση από την Unity 5 (2015) προς τις εκδόσεις 2017–2020 σηματοδότησε την έναρξη της «σύγχρονης εποχής» της μηχανής, με σταδιακή υιοθέτηση του Scriptable Render Pipeline (SRP) και την ανάπτυξη δύο κύριων pipelines: το Universal Render Pipeline (URP) και το High Definition Render Pipeline (HDRP).
+
+Η Unity 6, που παρουσιάστηκε ως η «νέα γενιά» της μηχανής, ενσωματώνει αυτές τις εξελίξεις σε μία πιο ώριμη και σταθερή μορφή, δίνοντας έμφαση στον ρεαλισμό, την απόδοση και την καλύτερη διαχείριση πολύπλοκων γραφικών σκηνών. Σε συνδυασμό με σύγχρονα εργαλεία όπως το \textit{AI-assisted development}, τα βελτιωμένα workflows για mobile πλατφόρμες και την ενισχυμένη υποστήριξη για VR/AR, η Unity 6 καθίσταται πλέον όχι μόνο ένα εργαλείο για παιχνίδια, αλλά μία ολοκληρωμένη πλατφόρμα ανάπτυξης διαδραστικών εμπειριών.
+
+Η Unity αποτελεί μία μηχανή ανάπτυξης που συνδυάζει ένα φιλικό περιβάλλον σχεδιασμού με ισχυρά εργαλεία προγραμματισμού. Η βασική γλώσσα scripting που υποστηρίζει είναι η C\#, η οποία προσφέρει ισορροπία μεταξύ απλότητας και εκφραστικότητας. Μέσω της C\# και του μοντέλου ανάπτυξης που βασίζεται σε \textit{components}, ο χρήστης μπορεί να δημιουργεί λογική παιχνιδιού, αλληλεπιδράσεις και πολύπλοκα συστήματα χωρίς την ανάγκη άμεσης διαχείρισης χαμηλού επιπέδου μνήμης.
+
+Ένα κρίσιμο τεχνολογικό στοιχείο της Unity είναι ο μεταγλωττιστής \textit{IL2CPP (Intermediate Language to C++)}, ο οποίος μεταφράζει τον κώδικα C\# σε C++ και στη συνέχεια σε native binary. Η διαδικασία αυτή βελτιστοποιεί την απόδοση και καθιστά δυνατή τη διανομή παιχνιδιών σε πλατφόρμες όπου η ερμηνευόμενη μορφή του CIL (Common Intermediate Language) δεν είναι αποδοτική, όπως σε Android και iOS. Με αυτόν τον τρόπο, η Unity εξασφαλίζει ότι οι εφαρμογές της διατηρούν υψηλά επίπεδα συμβατότητας και ταχύτητας.
+
+Tο \textit{Asset Store} λειτουργεί ως ένα ολοκληρωμένο οικοσύστημα εργαλείων, περιεχομένου και προσθηκών (\textit{add-ons}), το οποίο επιταχύνει σημαντικά τη διαδικασία ανάπτυξης παιχνιδιών. Δημιουργήθηκε το 2010 και σήμερα αποτελεί μία από τις μεγαλύτερες ψηφιακές αγορές για περιεχόμενο σχετικό με την ανάπτυξη παιχνιδιών. Μέσα από το Asset Store, οι προγραμματιστές και οι καλλιτέχνες έχουν πρόσβαση σε χιλιάδες έτοιμα πακέτα, τα οποία καλύπτουν ένα ευρύ φάσμα αναγκών: 
+
+\begin{itemize}
+    \item \textbf{Μοντέλα και υλικά (3D assets, PBR materials):} έτοιμα τρισδιάστατα αντικείμενα, χαρακτήρες, κτίρια, φυτά και υφές που μπορούν να ενσωματωθούν άμεσα σε μια σκηνή.
+    \item \textbf{Shaders και γραφικές βιβλιοθήκες:} εξειδικευμένα γραφικά εργαλεία για βελτίωση του φωτισμού, της απεικόνισης υλικών και της απόδοσης σε διαφορετικά pipelines (URP, HDRP).
+    \item \textbf{Scripts και συστήματα:} έτοιμες υλοποιήσεις για μηχανισμούς παιχνιδιού, όπως διαχείριση AI, φυσική, UI, συστήματα καιρικών φαινομένων ή procedural generation.
+    \item \textbf{Εργαλεία παραγωγικότητας:} πακέτα που βελτιώνουν το workflow του χρήστη, όπως level editors, terrain generators ή plugins για τη βελτιστοποίηση της απόδοσης.
+    \item \textbf{Ήχος και μουσική:} συλλογές από ηχητικά εφέ, μουσικά κομμάτια και συστήματα διαχείρισης ήχου.
+\end{itemize}
+
+Ένα ακόμη χαρακτηριστικό του Asset Store είναι η συμβολή του στη δημιουργία μιας ισχυρής \textit{community-driven οικονομίας}. Οι δημιουργοί δεν είναι απλοί καταναλωτές, αλλά μπορούν οι ίδιοι να δημοσιεύσουν και να πουλήσουν τα έργα τους, δημιουργώντας μια αγορά όπου η γνώση και η εμπειρία διαμοιράζονται ενεργά. Αυτό ενισχύει τη συνεργασία μεταξύ ανεξάρτητων προγραμματιστών και στούντιο, ενώ προσφέρει τη δυνατότητα ακόμη και σε μικρές ομάδες ή μεμονωμένους δημιουργούς να αποκτήσουν πρόσβαση σε πόρους που διαφορετικά θα απαιτούσαν μεγάλο κόστος ή χρόνο για να αναπτυχθούν.
+
+Σε σχέση με τις προηγούμενες εκδόσεις, η Unity 6 εισάγει μία σειρά από βελτιώσεις που ενισχύουν τόσο την απόδοση όσο και την ευκολία ανάπτυξης. Σε επίπεδο πολυπλατφορμικότητας, η νέα έκδοση προσφέρει καλύτερη υποστήριξη για Android, iOS, κονσόλες και XR μέσω του προτύπου OpenXR, ενώ μειώνει τα μεγέθη των builds και υποστηρίζει τεχνικές \textit{streaming installation}. Στο κομμάτι του προγραμματισμού, ο μεταγλωττιστής \textit{IL2CPP} και ο \textit{Burst Compiler} έχουν βελτιωθεί, ενώ η αυξημένη συμβατότητα με το \textit{.NET} επιτρέπει την ταχύτερη ανάπτυξη με C\#. (\href{https://unity.com/blog/unity-6-features-announcement}{https://unity.com/blog/unity-6-features-announcement})
+
+Η Unity 6 ενσωματώνει επίσης εργαλεία τεχνητής νοημοσύνης μέσω του \textit{Unity Muse}, που επιτρέπουν τη δημιουργία υλικών, animations και scripts από κείμενο, προσφέροντας νέες δυνατότητες αυτοματοποίησης. Παράλληλα, το νέο \textit{Water System} και η προσομοίωση βλάστησης μέσω GPU instancing βελτιώνουν τη δημιουργία ρεαλιστικών περιβαλλόντων χωρίς να απαιτούνται εξειδικευμένα εξωτερικά εργαλεία. Τέλος, το οικοσύστημα του \textit{Asset Store} έχει ενοποιηθεί ακόμη περισσότερο με τον Editor, επιτρέποντας πιο γρήγορη και άμεση ενσωμάτωση τρίτων εργαλείων στην ανάπτυξη. (\href{https://unity.com/blog/unity-6-features-announcement}{https://unity.com/blog/unity-6-features-announcement})
+
+
+\section{HDRP: High Definition Render Pipeline – αρχές και εφαρμογές}
+Ένα \textit{render pipeline} στην Unity είναι η ακολουθία διεργασιών που μετατρέπει τα αντικείμενα μιας σκηνής σε τελική εικόνα στην οθόνη. Κάθε frame περνά από τρία βασικά στάδια: 
+\begin{enumerate}
+    \item \textbf{Culling}: εντοπισμός και αφαίρεση αντικειμένων που δεν είναι ορατά στην κάμερα, είτε λόγω θέσης (\textit{frustum culling}), είτε επειδή καλύπτονται από άλλα αντικείμενα (\textit{occlusion culling}).
+    \item \textbf{Rendering}: σχεδίαση των ορατών αντικειμένων με τα κατάλληλα υλικά και φωτισμό σε pixel buffers.
+    \item \textbf{Post-processing}: εφαρμογή εφέ για τη βελτίωση της εικόνας, όπως \textit{color grading}, \textit{bloom} ή \textit{depth of field}.
+\end{enumerate}
+Η διαδικασία αυτή επαναλαμβάνεται για κάθε νέο καρέ, εξασφαλίζοντας τη συνεχή ροή εικόνας. (\href{https://docs.unity3d.com/6000.2/Documentation/Manual/render-pipelines-overview.html}{https://docs.unity3d.com/6000.2/Documentation/Manual/render-pipelines-overview.html})
+
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=1\linewidth]{84677e27857529cec274de4fa3daf281cd8eea22.png}
+    \caption{Στάδια μιας render pipeline workflow}
+    \label{fig:placeholder}
+\end{figure}
+Αρχικά, η Unity διέθετε μόνο το \textbf{Built-In Render Pipeline}, το οποίο προσέφερε γενική χρήση αλλά περιορισμένες δυνατότητες παραμετροποίησης. Με την εισαγωγή του \textit{Scriptable Render Pipeline (SRP)}, η Unity επέτρεψε στους προγραμματιστές να ελέγχουν σε βάθος τον τρόπο με τον οποίο υλοποιείται το culling, το rendering και το post-processing μέσω C\#. Από αυτήν τη μετάβαση προέκυψαν δύο νέοι προ-κατασκευασμένοι pipelines με διαφορετικό προσανατολισμό: 
+\begin{itemize}
+    \item \textbf{Universal Render Pipeline (URP)}: ελαφρύ και επεκτάσιμο pipeline, σχεδιασμένο ώστε να προσφέρει κλιμακούμενα γραφικά σε ένα ευρύ φάσμα συσκευών, από κινητά έως κονσόλες.
+    \item \textbf{High Definition Render Pipeline (HDRP)}: pipeline που στοχεύει σε υψηλή πιστότητα εικόνας και προηγμένες γραφικές τεχνικές, κατάλληλο για PC υψηλών επιδόσεων και AAA τίτλους.
+\end{itemize}
+Ο διαχωρισμός αυτός επέτρεψε την καλύτερη εξειδίκευση της Unity ανάλογα με τις ανάγκες κάθε έργου, ενώ ταυτόχρονα διατήρησε τη δυνατότητα ανάπτυξης custom pipelines μέσω της SRP API. 
+
+Η πληρότητα αυτού του High Definition Render Pipeline οφείλεται σε ένα σύγχρονο, πλήρως προγραμματιζόμενο γραφικό υπόβαθρο: υποστηρίζει DirectX~12/11, Vulkan, WEBGPU και Metal, VR με single-pass instancing, \textit{camera-relative rendering} για σταθερότητα αριθμητικής ακρίβειας σε μεγάλες σκηνές, καθώς και \textit{dynamic resolution} με TAAU, FSR και DLSS. Οι ρυθμίσεις σκηνής εφαρμόζονται τοπικά μέσω \textit{Volumes} (override ανά περιοχή), ενώ η \textit{Physical Camera} ενοποιεί έκθεση, βάθος πεδίου και tone mapping με HDR output.
+
+\paragraph{Υλικά και shading.} Το HDRP παρέχει εξειδικευμένα shaders: \textit{Lit/Layered Lit, Unlit, StackLit}, καθώς και \textit{Hair, Fabric, Eye, AxF}. Υποστηρίζει διαφάνεια με refraction/distortion, anisotropy/iridescence/SSS, εκπομπή φωτός (emission), tessellation/dispacement, \textit{Decals} (με Decal Projector και Surface Gradients) και \textit{Terrain Lit}. Επιπλέον, διαθέτει \textit{Compute Thickness} (screen-space) και \textit{Volumetric Materials} για τοπική ομίχλη. 
+
+\paragraph{Φωτισμός.} Χρησιμοποιούνται φυσικές μονάδες φωτός (PLU) και πλήρες σετ τύπων: Directional, Spot (cone/pyramid/box), Point, \textit{Area} (Rectangle/Tube/Disk). Προσφέρονται \textit{Rendering Layers} (αποσύζευξη φωτισμού/σκιών), \textit{IES profiles} και cookies, εργαλεία \textit{Light Anchor/Light Explorer}, \textit{data-driven} και \textit{screen-space Lens Flares}, καθώς και \textit{Reflection Probes} (cubemap/planar) με φυσικό φιλτράρισμα. 
+
+\paragraph{Κάμερα και post.} Το HDRP διαθέτει δικό του \textit{post-processing} υψηλής ποιότητας, \textit{HDR display output} (ACES, tone-mapping, wide-gamut), \textit{accumulation motion blur} και επιλογές anti-aliasing (MSAA, TAA, SMAA, FXAA). Η \textit{Physical Camera} ενοποιεί έκθεση/DOF με τις φυσικές μονάδες φωτός, ενώ τα \textit{Custom Post-processing} και \textit{Custom Passes} επιτρέπουν παρεμβολές στο pipeline και πρόσβαση σε buffers (depth, normals, motion vectors). Περιλαμβάνεται επίσης \textit{High-Quality Line Rendering} και \textit{AOV export}. 
+
+\paragraph{Path Tracing.} Το HDRP υποστηρίζει path-traced DOF, SSS, fog και decals, με δυνατότητα \textit{convergence recording} και ενσωμάτωση denoisers (NVIDIA OptiX, Intel OIDN). Λειτουργεί με τα υλικά Lit/Layered Lit/Unlit/StackLit/Fabric/AxF. 
+
+\paragraph{Εργαλεία και παραγωγικότητα.} Προσφέρονται \textit{Render Pipeline Wizard}, \textit{Rendering Debugger} (με material/lighting debug views), \textit{Color Checker}, \textit{Light Placement Tool}, \textit{LookDev}, καθώς και \textit{Graphics Compositor} (camera stacking, graph-based/3D composition) για real-time σύνθεση χωρίς εξωτερικό compositor.  (\href{https://docs.unity3d.com/Packages/com.unity.render-pipelines.high-definition@17.4/manual/HDRP-Features.html}{https://docs.unity3d.com/Packages/com.unity.render-pipelines.high-definition@17.4/manual/HDRP-Features.html})
+
+\section{Τεχνολογίες animation: Motion Capture,  Voice acting, facial animation}
+Η χρήση \textit{motion capture} (mocap) στα παιχνίδια πέρασε από τρία χαρακτηριστικά στάδια: (α) πρώιμη ψηφιοποίηση/οπτικό mocap στα 90s, (β) κινηματογραφικού τύπου λήψεις στα 2000s, (γ) ολοκληρωμένο \textit{performance capture} σήμερα (σώμα–πρόσωπο–φωνή).
+
+\paragraph{1990s — Ψηφιοποίηση και πρώιμο οπτικό mocap.}
+Τίτλοι όπως το \textbf{Mortal Kombat 4 (1997)} αξιοποίησαν πρώιμα οπτικά συστήματα mocap για 3D χαρακτήρες, εξέλιξη της προηγούμενης μεθόδου «ψηφιοποίησης» ηθοποιών που χαρακτήριζε τα 2D επεισόδια. Η ακρίβεια ήταν περιορισμένη, τα \textit{cleanup/retargeting} απαιτητικά και ο εξοπλισμός ακριβός, όμως το αποτέλεσμα υπερείχε έναντι του πλήρους \textit{keyframing} σε ρεαλισμό και ταχύτητα παραγωγής.
+
+
+\paragraph{2000s — Κινηματογραφική σκηνοθεσία και σκηνές δράσης.}
+Το \textbf{Metal Gear Solid 2 (2001)} καθιέρωσε την ευρεία υιοθέτηση mocap για κινηματογραφικά \textit{cutscenes} και μάχες, με συνεργασίες κασκαντέρ/ηθοποιών και στούντιο πολλαπλών καμερών. Η έμφαση μετατοπίζεται σε σκηνοθεσία κίνησης, \textit{shot planning} και ακριβέστερο \textit{retargeting} σε humanoid rigs.
+
+\paragraph{2010s–σήμερα — Performance capture υψηλής πιστότητας.}
+Σύγχρονοι AAA τίτλοι υιοθετούν \textbf{performance capture}, δηλαδή ταυτόχρονη λήψη σώματος, προσώπου και φωνής:
+\begin{itemize}
+  \item \textbf{The Last of Us (2013/2020)}: στούντιο με head-mounted κάμερες και \textit{facial blendshapes/visemes} για φυσικό διάλογο και λεπτές εκφράσεις.
+  \item \textbf{Red Dead Redemption 2 (2018)}: μεγάλης κλίμακας λήψεις με ensemble cast, εκτεταμένο \textit{cleanup} και \textit{animation layering} για πλήθος/ιππασία.
+  \item \textbf{God of War (2018/2022)}: σύζευξη \textit{full-body} mocap με \textit{facial solve} υψηλής ανάλυσης, \textit{IK constraints} και in-engine \textit{tuning}.
+  \item \textbf{Death Stranding (2019)}: βαθύς συνδυασμός \textit{scan} ηθοποιών, facial capture και λεπτομερές \textit{retargeting} στο Decima, με κινηματογραφική σκηνοθεσία.
+\end{itemize}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=1\linewidth]{gow_mocap1.jpg}
+    \caption{God of War Fullbody Capture}
+    \label{fig:placeholder}
+\end{figure}
+
+Παράλληλα, τεχνικές επιδείξεις της Unity, όπως τα \textit{The Heretic} και \textit{Enemies}, αξιοποιούν εξειδικευμένα εργαστήρια (π.χ.\ ευρωπαϊκά mocap labs) για καταγραφή σώματος/προσώπου/δακτύλων και παρουσιάζουν πλήρη \textit{digital human} pipelines με \textit{strand-based hair}, φυσικά υλικά και ακριβές \textit{facial solve}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{enemies.png}
+    \caption{Enemies demo Χαρακτήρας}
+    \label{fig:placeholder}
+\end{figure}
+
+\paragraph{Η σημερινή τομή: στούντιο υψηλού επιπέδου και προσιτές λύσεις.}
+Στο άκρο της μέγιστης ποιότητας βρίσκονται τα εξειδικευμένα \textit{studio/labs} με οπτικά συστήματα πολλαπλών καμερών, \textit{HMC} για πρόσωπο και συγχρονισμένο ήχο, προσφέροντας  ακρίβεια σε απαιτητικές σκηνές. Ταυτόχρονα, η αγορά «δημοκρατικοποιήθηκε» μέσω προσιτών \textit{inertial} στολών και \textit{markerless} λύσεων (πχ.\ \textit{Rokoko Smartsuit/Smartgloves}) με απλό setup και \textit{real-time streaming} προς Unity, ιδανικών για μικρές ομάδες, \textit{previz} και παραγωγή σε σύντομο χρόνο. Το σημερινό τοπίο είναι επομένως υβριδικό: οι δημιουργοί επιλέγουν σημείο ισορροπίας μεταξύ κόστους, ταχύτητας και πιστότητας, από κινηματογραφικού τύπου στούντιο έως ευέλικτα, οικονομικά pipelines.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{rokokoSuit.png}
+    \caption{Rokoko fullbody mocap suit με κόστος \$2,295 }
+    \label{fig:placeholder}
+\end{figure}
+
+\paragraph{AI \& Prompt-to-Animation}
+Πέρα από το κλασικό mocap, τα πρόσφατα \textit{text-to-motion} μοντέλα δημιουργούν κίνηση απευθείας από λεκτικές περιγραφές (prompts). Η βασική ιδέα είναι: το κείμενο κωδικοποιείται (NLP encoder) και ένα γενετικό μοντέλο παράγει διανύσματα κίνησης για έναν ανθρώπινο σκελετό, τα οποία στη συνέχεια \emph{retargetάρονται} στο humanoid rig της Unity ως \textit{AnimationClips}/FBX. Ερευνητικά, τα \textbf{diffusion} μοντέλα (π.χ.\ MDM) και τα \textbf{VQ-VAE + GPT} σχήματα (π.χ.\ T2M-GPT) έχουν καθιερωθεί πάνω σε datasets τύπου \textit{HumanML3D}, επιτυγχάνοντας κίνηση που ταιριάζει νοηματικά στο prompt με ρεαλιστικούς χρονισμούς και ποικιλία στυλ. Στο παραγωγικό περιβάλλον, λύσεις όπως το \textbf{Unity Muse Animate} και υπηρεσίες τύπου \textbf{SayMotion} (DeepMotion) επιτρέπουν prompt→animation και εξαγωγή σε FBX/BVH για άμεση χρήση σε Unity. Περιορισμοί σήμερα: «out-of-distribution» ενέργειες, επαφές/τριβή με το έδαφος και λεπτομέρειες χεριών/προσώπου, που όμως βελτιώνονται γρήγορα με νεότερα whole-body μοντέλα. \href{https://guytevet.github.io/mdm-page}{(https://guytevet.github.io/mdm-page})
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{65f91a50f4add725aa4efc45_2-poster-00001.jpg}
+    \caption{Deepmotion Περιβάλλον}
+    \label{fig:placeholder}
+\end{figure}
+
+\section{Δημιουργία ρεαλιστικών περιβαλλόντων: Photogrammetry, Quixel, PBR}
+
+\subsubsection{Φωτογραμμετρία και νεότερα μοντέλα νευρωνικής ανακατασκευής (NeRF, Gaussian Splatting)}
+\paragraph{Τι είναι η φωτογραμμετρία.}
+
+Η φωτογραμμετρία ανακατασκευάζει τρισδιάστατη γεωμετρία και υφές από επικαλυπτόμενες φωτογραφίες μέσω δύο σταδίων: \emph{Structure-from-Motion (SfM)} για εκτίμηση θέσεων κάμερας και αραιού νέφους σημείων, και \emph{Multi-View Stereo (MVS)} για πυκνό νέφος, πλέγμα (\emph{meshing}) και υφές (\emph{texture baking}). Το αποτέλεσμα είναι \textbf{ρητή} (\emph{explicit}) αναπαράσταση (mesh με UVs/PBR χάρτες) έτοιμη για game engines. Πλεονεκτήματα: καλή γεωμετρική ακρίβεια, ρεαλιστικές υφές, άμεση επεξεργασία/retopology. Περιορισμοί: ευαισθησία σε γυαλιστερές/διαφανείς επιφάνειες και ανάγκη προσεγμένης λήψης/καθαρισμού.(\href{https://library.huree.edu.mn/data/202295/2024-06-03/Computer%20Vision%20-%20Algorithms%20and%20Applications%202nd%20Edition%2C%20Richard%20Szeliski.pdf}{πηγή})
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{photogrammetry-method.jpg}
+    \caption{Φωτογραμμετρία}
+    \label{fig:placeholder}
+\end{figure}
+\paragraph{NeRF (Neural Radiance Fields).}
+Τα NeRF μοντελοποιούν τη σκηνή ως \textbf{συνάρτηση ακτινοβολίας} (όγκος) που, δεδομένης θέσης και διεύθυνσης ακτίνας, αποδίδει χρώμα και πυκνότητα· η παράμετρος μαθαίνεται από πολλαπλές εικόνες και αποδίδεται με διαφορίσιμο \emph{volumetric rendering}. Πλεονεκτήματα: υψηλή πιστότητα και \emph{novel view synthesis} χωρίς ρητή μεσοεπιφάνεια. Μειονεκτήματα: \textbf{άρρητη} (\emph{implicit}) αναπαράσταση, δεν προκύπτει άμεσα καθαρό mesh και το editing είναι περιορισμένο (mesh extraction απαιτεί επιπλέον βήματα). Επιταχυντές τύπου \emph{hash-grid encodings} μειώνουν δραστικά τους χρόνους προπόνησης/απόδοσης.(\href{https://arxiv.org/pdf/2003.08934}{https://arxiv.org/pdf/2003.08934})
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{neural-field.png}
+    \caption{NeRF}
+    \label{fig:placeholder}
+\end{figure}
+
+\paragraph{Gaussian Splatting (3D Gaussians).}
+Η \emph{Gaussian Splatting} αναπαριστά τη σκηνή ως σύνολο ανισότροπων 3D Gaussians (surfel-like primitives) με χρώμα/διαφάνεια, που προβάλλονται/συντίθενται σε πραγματικό χρόνο. Πλεονέκτημα: \textbf{ταχύτατη} προβολή με ποιότητα συχνά συγκρίσιμη ή ανώτερη των NeRF. Περιορισμός: δυσκολία μετατροπής σε υδατοστεγές mesh και περιορισμένη «παραδοσιακή» επεξεργασία. Είναι ιδανική για viewing/relighting και ταχεία προεπισκόπηση σκηνών.(\href{https://arxiv.org/pdf/2308.04079}{https://arxiv.org/pdf/2308.04079})
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{gaussianSplatting.png}
+    \caption{Gaussian Splatting}
+    \label{fig:placeholder}
+\end{figure}
+
+
+
+\paragraph{Σύγκριση Workflows.}
+\begin{itemize}
+  \item \textbf{Photogrammetry}: ρητή γεωμετρία (mesh/UV), έτοιμη για PBR και game engines· απαιτεί προσεγμένη λήψη και \emph{cleanup}.
+  \item \textbf{NeRF}: υψηλή οπτική πιστότητα/γενίκευση προβολών· άρρητη αναπαράσταση, mesh extraction όχι πάντα καθαρό.
+  \item \textbf{Gaussian Splatting}: real-time προβολή με υψηλή ποιότητα· δυσκολία σε ακριβές mesh/production editing.
+\end{itemize}
+Στην πράξη συχνά ακολουθείται υβριδικός δρόμος: photogrammetry για κύρια γεωμετρία + νευρωνικές μέθοδοι για γρήγορη σύλληψη πολύπλοκων λεπτομερειών ή \emph{set dressing}.
+
+\paragraph{Λογισμικό και εργαλεία.}
+\begin{itemize}
+  \item \textbf{Κλασική φωτογραμμετρία}: RealityCapture, Agisoft Metashape, COLMAP (academic), AliceVision/Meshroom (open-source), Autodesk ReCap Photo, 3DF Zephyr, Polycam/Kiri για κινητά.
+  \item \textbf{NeRF pipelines}: instant-ngp, Nerfstudio, Luma AI, Polycam NeRF· εξαγωγές σε viewers/ενίοτε σε meshing.
+  \item \textbf{Gaussian Splatting}: αναφορικές υλοποιήσεις (SIBR/gsplat), ενσωματώσεις σε Nerfstudio και viewers για real-time αναπαραγωγή.
+  \item \textbf{DCC/Engine ένταξη}: Blender (retopo/UV/bake), Substance 3D (PBR authoring), Unity (HDRP/URP υλικά, Decals, LODs, Streaming Mipmaps).
+\end{itemize}
+
+\paragraph{Κατευθυντήριες για παραγωγή.}
+Στόχος σε 60–80\% επικάλυψη, σταθερό white balance/έκθεση, διάχυτο φωτισμό, κλίμακα αναφοράς και πυκνή τροχιά λήψεων. Για game-ready assets: retopology/decimation, UV unwrapping, bakes (normal/AO/curvature) και συνεπή PBR.
+
+\paragraph{Quixel Megascans (βιβλιοθήκη σκαναρισμένων assets).}
+Το \textit{Quixel Megascans} είναι μια εκτεταμένη βιβλιοθήκη φωτογραμμετρικών assets (meshes, surfaces, atlases, decals) με συνεπή PBR χαρτογράφηση και πολλαπλά LODs. Μέσω του \textit{Quixel Bridge} τα πακέτα κατεβαίνουν και γίνονται export σε DCC/engines· στην Unity εισάγονται ως \textbf{HDRP/URP–έτοιμα} υλικά/πλέγματα με σωστά κανάλια (Base Color, Normal, Mask/ORM). Τα \textbf{surfaces} (tileable υφές) και τα \textbf{3D assets} συνοδεύονται από \emph{packed} χάρτες (π.χ.\ Mask Map: \textbf{R=Metallic}, \textbf{G=AO}, \textbf{B=DetailMask}, \textbf{A=Smoothness}) ώστε να «κουμπώνουν» άμεσα στα HDRP/Lit materials.
+
+\textbf{Βέλτιστες πρακτικές ένταξης:}
+\begin{itemize}
+  \item \textbf{Κλίμακα/μονάδες:} έλεγχος real–world κλίμακας κατά την εισαγωγή (Bridge → Unity units σε μέτρα).
+  \item \textbf{Texel density:} ενοποίηση πυκνότητας υφής μεταξύ γειτονικών αντικειμένων για να αποφεύγονται «μπαλώματα».
+  \item \textbf{LODs/Instancing:} ενεργοποίηση \texttt{LODGroup}, GPU instancing σε επαναλαμβανόμενα props, και \emph{Billboard/Impostors} όπου χρειάζεται.
+  \item \textbf{Υλικά:} σωστός \emph{colorspace} (sRGB μόνο στο Albedo), linear στους τεχνικούς χάρτες (Normal/Mask), και \textit{Detail mapping} για κοντινά πλάνα.
+  \item \textbf{Σύνθεση σκηνής:} \textit{Decal Projectors} για βρωμιά/φθορά και σβήσιμο seams, \textit{Vertex painting} σε terrain/meshes για ομαλές μεταβάσεις.
+  \item \textbf{Streaming μνήμης:} \textit{Streaming Mipmaps} ή \textit{Virtual Texturing} σε μεγάλες σκηνές με πολλά high-res surfaces.
+\end{itemize}
+
+\textbf{Εφαρμογή στο έργο:}
+Στο \emph{forest level} χρησιμοποιούνται Quixel surfaces (χώμα/πέτρα/ξύλο) και 3D assets με LODs για σταθερό frame time, ενώ decals προσθέτουν μικρο-φθορές σε κορμούς/βράχια.
+
+\paragraph{PBR (Physically Based Rendering).}
+Το \textit{PBR} περιγράφει υλικά και φωτισμό με φυσικά συνεπή μοντέλα (ενεργειακή διατήρηση, \textit{Fresnel}, μικρο–τραχύτητα), ώστε ένα υλικό να «συμπεριφέρεται» ρεαλιστικά κάτω από οποιοδήποτε φως. Στις σύγχρονες μηχανές χρησιμοποιείται συνήθως μικρο-επιφανειακό BRDF τύπου \textit{Cook–Torrance} (microfacet) με παραμέτρους αγωγιμότητας/διηλεκτρικότητας και τραχύτητας.
+
+\textbf{Metal/Roughness workflow (Unity/HDRP).} Τα βασικά κανάλια:
+\begin{itemize}
+  \item \textbf{Base Color / Albedo} (sRGB): καθαρό χρώμα χωρίς baked σκιές/φωτεινά σημεία.
+  \item \textbf{Normal} (linear, tangent space): μικρο–γεωμετρία/ανακούφιση επιφάνειας.
+  \item \textbf{Metallic} (linear): 0 για διηλεκτρικά (ξύλο/πλαστικό/πέτρα), 1 για μέταλλα.
+  \item \textbf{Roughness / Smoothness} (linear): διασπορά ανακλάσεων (στην Unity συνήθως \emph{Smoothness} = 1–Roughness).
+  \item \textbf{Ambient Occlusion} (linear): αυτο–σκίαση μικρής κλίμακας (πολλαπλασιαστικά στο lighting).
+\end{itemize}
+
+Στο HDRP χρησιμοποιείται \textbf{Mask Map} με πακετάρισμα καναλιών: \textbf{R=Metallic}, \textbf{G=AO}, \textbf{B=Detail Mask}, \textbf{A=Smoothness}. Όλοι οι «τεχνικοί» χάρτες εισάγονται σε \textbf{linear} χρωματικό χώρο (μη sRGB). 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{pbr1.png}
+    \caption{PBR παράδειγμα από ενα σύνολο textures για το ίδιο material}
+    \label{fig:placeholder}
+\end{figure}
+
+
+\section{Οπτικοποίηση και βελτιστοποίηση: Volumetric Lighting, FSR, Ray Tracing}
+
+Η οπτική ποιότητα σε real-time γραφικά ισορροπεί διαρκώς με την απόδοση. Στη Unity 6 οι βασικοί «μοχλοί» είναι ο ογκομετρικός φωτισμός (volumetrics), οι τεχνικές ανοδικής κλιμάκωσης (FSR) και τα ray-traced εφέ. Παρακάτω συνοψίζονται οι αρχές και οι πρακτικές επιπτώσεις τους.
+
+\paragraph{Volumetric Lighting.}
+Ο ογκομετρικός φωτισμός προσομοιώνει τη σκέδαση/απορρόφηση του φωτός μέσα σε μέσο (ομίχλη, σκόνη), κάνοντας ορατές τις φωτεινές δεσμίδες (\emph{god rays}) και «δένοντας» τα υλικά στο περιβάλλον. Στη Unity εφαρμόζεται τοπικά μέσω \textit{Volumes} (παγκόσμια ή ζωνικές ρυθμίσεις) με παραμέτρους πυκνότητας, ανισοτροπίας και διαχωρισμού ποιότητας (step count). \textbf{Επίπτωση}: βαρύνει κυρίως το pixel/lighting στάδιο, κρατάμε μικρότερο εύρος επιρροής, χαμηλότερη ποιότητα σε μακρινές κάμερες και κλιμάκωση ανά preset.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{volumetric lighting.jpeg}
+    \caption{ογκομετρικός φωτισμός on/off}
+    \label{fig:placeholder}
+\end{figure}
+
+\paragraph{Upscalers (FSR, DLSS, XeSS)}
+Οι \emph{upscalers} αποδίδουν το καρέ σε χαμηλότερη \emph{εσωτερική} ανάλυση και το ανακατασκευάζουν στην \emph{τελική} ανάλυση, αυξάνοντας τον ρυθμό καρέ με μικρό κόστος ποιότητας. Διακρίνονται σε:
+\begin{itemize}
+  \item \textbf{Spatial} (π.χ.\ FSR~1, NIS): βασίζονται μόνο στο τρέχον καρέ. Ταχείς, αλλά ευάλωτοι σε aliasing/shimmer.
+  \item \textbf{Temporal} (π.χ.\ FSR~2/3~SR, DLSS~2, XeSS): χρησιμοποιούν \emph{motion vectors}, \emph{jittered sampling} και ιστορικό καρέ (TAAU) για υψηλότερη λεπτομέρεια και σταθερότητα άκρων.
+\end{itemize}
+
+\textbf{FSR~2/3 (AMD).} Temporal upscaler (TAAU) που δουλεύει σε \emph{όλες} τις σύγχρονες GPU (vendor–agnostic). Δίνει καθαρή εικόνα με σωστά motion vectors και ήπιο sharpening. Το \textbf{FSR~3} προσθέτει \emph{Frame Generation} (ενδιάμεσα καρέ) ανεξάρτητα από RT πυρήνες—βελτιώνει FPS αλλά όχι input latency.
+
+\textbf{DLSS~2/3 (NVIDIA).} Temporal upscaler με AI μοντέλο (Tensor Cores) και πολύ καλό anti-aliasing/λεπτομέρεια, ειδικά σε λεπτές γεωμετρίες/κινήσεις. Το \textbf{DLSS~3} (Ada+) εισάγει \emph{Frame Generation} με \emph{Optical Flow}; συνδυάζεται με \emph{Reflex} για μείωση latency. Απαιτεί συμβατές RTX κάρτες.
+
+\textbf{XeSS (Intel).} Temporal upscaler τύπου DLSS/FSR με AI acceleration (XMX) όπου υπάρχει, και DP4a fallback για συμβατότητα σε πολλούς GPUs. Ποιότητα κοντά σε FSR~2/DLSS~2, με ελαφρώς πιο μεταβλητά αποτελέσματα ανά hardware/driver.
+
+Το \textbf{Frame Generation} παράγει ενδιάμεσα καρέ από \emph{optical flow}/motion vectors για αισθητή αύξηση FPS όταν είμαστε GPU-bound. Δεν μειώνει (και μπορεί να αυξήσει) το input latency, γι’ αυτό συνδυάζεται με \emph{temporal upscaler} (DLSS/FSR) και προτείνεται κυρίως για single-player/cinematic χρήσεις όπου το latency δεν είναι κρίσιμο.
+
+\textit{Σημείωση:} Το \emph{Frame Generation} (DLSS~3/FSR~3) αυξάνει την ομαλότητα (FPS) αλλά δεν επιταχύνει το \emph{input→output} μονοπάτι∙ προτείνεται μόνο αν το βασικό upscaler ήδη «κρατά» αποδεκτό latency.
+
+\textbf{Συνήθη τεχνικά ζητήματα \& λύσεις.}
+\begin{itemize}
+  \item \emph{Ghosting/trailling} σε ταχείες κινήσεις ή ημι-διάφανα: απαιτούνται σωστοί \textbf{motion vectors} για όλα τα \emph{Skinned Mesh/particles} και χρήσης \textbf{Reactive Masks} για υλικά με εκπομπή/διαφάνεια (νεον, φωτεινές πινακίδες).
+  \item \emph{Shimmer/moire} σε λεπτά patterns: σταθερό \textbf{TAA} baseline, ορθή ρύθμιση \emph{jitter}, προσεκτικό \emph{sharpening} (RCAS/contrast adaptive).
+  \item \emph{HUD/UI} θόλωση: απόδοση UI σε \emph{after upscaling pass} (χωριστό render scale) ή χρήση \emph{sharp UI masks}.
+  \item \emph{Checkerboard transparencies/foliage}: ενεργά \textbf{alpha‐to‐coverage} / dithering patterns που παίζουν καλά με το temporal history.
+\end{itemize}
+
+\textbf{Διαφορά με Dynamic Resolution.}
+Το \emph{Dynamic Resolution} μεταβάλλει \emph{ζωντανά} την εσωτερική ανάλυση ανά frame για σταθερό frame-time· οι temporal upscalers λειτουργούν «πάνω» σε αυτήν την κλίμακα για να κρατούν την εικόνα καθαρή.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{upscaling.jpg}
+    \caption{upscaling σύγκριση}
+    \label{fig:placeholder}
+\end{figure}
+
+\paragraph{Ray Tracing }
+
+Το \textit{ray tracing} προσομοιώνει τη διάδοση φωτός ιχνηλατώντας ακτίνες που αλληλεπιδρούν με τη γεωμετρία (ανακλάσεις, διαθλάσεις, σκιάσεις). Σε real–time engines υλοποιείται μέσω \textbf{hardware RT} (BVH επιταχυνόμενες δομές) και APIs όπως \textbf{DXR} (DirectX Raytracing) ή \textbf{Vulkan RT}. Σε αντίθεση με τα \textit{screen-space} εφέ, δεν περιορίζεται από το οπτικό πεδίο της κάμερας και αποδίδει «κρυφές»/off-screen συνεισφορές.
+
+\textbf{Denoising \& σταθερότητα.}
+Οι λίγες ακτίνες ανά pixel (\emph{spp}) προκαλούν θόρυβο· απαιτείται \textbf{spatio–temporal denoising} (με χρήση \emph{motion vectors}/history). Συνήθεις επιλογές: \emph{built–in denoisers}, \emph{NVIDIA OptiX} ή \emph{Intel OIDN} (όπου υποστηρίζονται). Προσοχή σε \emph{ghosting} σε ημιδιαφανή/εκπομπή—χρήση \emph{reactive masks} και σωστή σήμανση υλικών.
+
+\textbf{Υβριδικές ροές (quality/cost).}
+Για mid–range GPUs, προτιμώνται \textbf{υβριδικά} σχήματα:
+\begin{itemize}
+  \item \emph{SSR + RT Reflections}: SSR για τα «εύκολα», RT μόνο ως συμπλήρωση/validation για off-screen.
+  \item \emph{Cascaded shadows + RT Shadows}: RT σε κοντινά/σημαντικά φώτα, maps για τα υπόλοιπα.
+  \item \emph{SSAO + RTAO}: RT μόνο σε κοντινό βάθος ή σε hero assets.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{path-tracing-ray-tracing-rasterization.png}
+    \caption{path-tracing-ray-tracing-rasterization}
+    \label{fig:placeholder}
+\end{figure}
+
+Στο παρόν έργο \textbf{δεν} εφαρμόζεται ray tracing/παραλλαγές (RT shadows/reflections/RTGI), καθώς η \textbf{GTX~1070 (Pascal)} δεν διαθέτει RT cores ούτε υποστηρίζει DLSS/Frame Generation. Επομένως υιοθετείται \textbf{υβριδικό non-RT} προφίλ: \emph{SSR} για αντανακλάσεις, \emph{SSAO}/\emph{contact shadows} για μικρο-σκίαση, \emph{reflection probes}/planar reflections όπου χρειάζεται, και \textbf{shadow maps} (με σωστό cascade tuning). Για απόδοση χρησιμοποιούνται \textbf{FSR~2} (vendor-agnostic upscaler), \textbf{Dynamic Resolution}, αυστηρά \textbf{LODs}, light/volume culling και \textbf{baked ή mixed lighting} σε στατικά στοιχεία. Έτσι επιτυγχάνεται σταθερό frame-time χωρίς RT.
+
+
+%---------------- ΚΕΦΑΛΑΙΟ 3 ----------------------------
+\chapter{Οργάνωση Ανάπτυξης και Τεχνολογικός Σχεδιασμός}
+\section{Επιλογή εργαλείων και εργονομικός σχεδιασμός pipeline}
+
+Στην παρούσα ενότητα παρουσιάζονται οι επιλογές εργαλείων που υιοθετήθηκαν, κατόπιν συστηματικής μελέτης, πειραματικής δοκιμής και σύγκρισης εναλλακτικών λύσεων ως προς λειτουργικότητα, απόδοση, σταθερότητα, κόστος και ευκολία ενσωμάτωσης στο προτεινόμενο pipeline, για τους σκοπούς της παρούσας εργασίας.
+
+\begin{itemize}
+  \item \textbf{Game engine:}
+  \begin{itemize}
+    \item \textbf{Επιλέχθηκε:} Unity~6 — για ευελιξία και ισχυρό \textit{community support \& content} (assets, tutorials, forums, documentation).
+    \item \textbf{Δεν Επιλέχθηκε:} Unreal - λιγότερο ταιριαστό στους στόχους μου ως προς ευελιξία/οικοσύστημα.
+  \end{itemize}
+
+  \item \textbf{Character creation:}
+  \begin{itemize}
+    \item \textbf{Επιλέχθηκε:} Daz Studio - πρωτίστως για λόγους κόστους.
+    \item \textbf{Δεν Επιλέχθηκε:} Reallusion Character Creator~4 - υψηλότερο κόστος.
+  \end{itemize}
+
+  \item \textbf{DCC (μοντελοποίηση/UV/bakes):}
+  \begin{itemize}
+    \item \textbf{Επιλέχθηκε:} Blender - χρηστικότητα, μεγάλη ποικιλία plugins/add-ons από το community, ηπιότερο \textit{learning curve} λόγω διαθέσιμου εκπαιδευτικού υλικού.
+    \item \textbf{Δεν Επιλέχθηκε:} Maya / 3ds Max - κόστος και βαρύτερη καμπύλη μάθησης για το scope μου.
+  \end{itemize}
+
+  \item \textbf{Photogrammetry:}
+  \begin{itemize}
+    \item \textbf{Επιλέχθηκε:} RealityScan - καλύτερα \textit{game-ready} αποτελέσματα για τη ροή μου, διαθεσιμότητα \textit{Android app}, ευχρηστία, αποδοτικότητα χρόνου και λιγότερα crashes/περιορισμοί hardware.
+    \item \textbf{Δεν Επιλέχθηκε:} Meshroom, Agisoft PhotoScan/Metashape, Autodesk ReCap - πρακτικοί περιορισμοί στη ροή μου (π.χ.\ απαιτήσεις hardware/σταθερότητα). \textit{Σημ.:} ορισμένες λύσεις (π.χ.\ PhotoScan/μέθοδοι τύπου «PostShot») απαιτούν RTX GPU.
+  \end{itemize}
+
+  \item \textbf{Texturing / PBR authoring:}
+  \begin{itemize}
+    \item \textbf{Επιλέχθηκε:} Materialize - πιο άμεσο και γρήγορο workflow για παραγωγή PBR textures.
+    \item \textbf{Δεν Επιλέχθηκε:} Quixel Mixer - βραδύτερο για τις ανάγκες μου.
+  \end{itemize}
+
+  \item \textbf{Asset libraries:}
+  \begin{itemize}
+    \item \textbf{Επιλέχθηκε:} BlenderKit (γρήγορο sourcing μέσα στο Blender) και, όπου χρειάστηκε, Quixel Megascans για συνεπή ποιότητα.
+  \end{itemize}
+
+  \item \textbf{Animation / Mocap:}
+  \begin{itemize}
+    \item \textbf{Επιλέχθηκε:} Rokoko - δωρεάν \textit{facial mocap} με iPhone (TrueDepth, iPhone~X+).
+    \item \textbf{Επίσης:} Mixamo - έτοιμα animations για ταχεία ένταξη.
+  \end{itemize}
+
+  \item \textbf{Blender add-ons:}
+  \begin{itemize}
+    \item \textbf{Επιλέχθηκε:} Faceit, Rig~GNS, BlenderKit - για επιτάχυνση face/rig setup και asset sourcing.
+  \end{itemize}
+
+  \item \textbf{Voice acting:}
+  \begin{itemize}
+    \item \textbf{Επιλέχθηκε:} ElevenLabs - για παραγωγή/πρωτοτύπηση φωνής.
+  \end{itemize}
+
+  \item \textbf{IDE \& Scripting:}
+  \begin{itemize}
+    \item \textbf{Επιλέχθηκε:} Visual Studio - ιδανικό IDE για C\# \& Unity workflow.
+  \end{itemize}
+
+  \item \textbf{Version control:}
+  \begin{itemize}
+    \item \textbf{Επιλέχθηκε:} Unity Version Control \textbf{και} GitHub (Git + LFS) - συνεργασία, ιστορικό, διαχείριση μεγάλων binaries.
+  \end{itemize}
+
+  \item \textbf{Πλατφόρμα / στόχος απόδοσης:}
+  \begin{itemize}
+    \item \textbf{Target:} Windows-only, 1080p σε mid-range PC ακόμη και δεκαετίας (GTX~1070), περίπου \textbf{30–60 FPS}.
+  \end{itemize}
+\end{itemize}
+
+
+\section{Οργάνωση αρχείων και assets — version control (Unity, Blender, Git)}
+
+\subsection{Οργάνωση αρχείων και assets — δομή φακέλων}
+
+Στόχος της δομής είναι: (α) ευκολία πλοήγησης, (β) καθαρός διαχωρισμός «δικού μας» κώδικα από third-party assets, (γ) προβλέψιμες διαδρομές για αυτοματοποιήσεις (builds, QA), και (δ) ελαχιστοποίηση συγκρούσεων σε ομάδες. Η παρακάτω ιεραρχία δημιουργείται αυτόματα με \textbf{Unity Editor script} από το μενού \menu{Tools $\rightarrow$ Generate Folder Structure}, ώστε κάθε νέο clone να ξεκινά με ίδιο baseline.
+
+\subsection*{Αρχές σχεδιασμού }
+\begin{itemize}
+  \item \textbf{\_Project:} όλος ο «first-party» κώδικας/πόροι (scripts, prefabs, materials, UI, data).
+  \item \textbf{\_ExternalAssets:} τρίτα πακέτα (Asset Store, plugins) απομονωμένα.
+  \item \textbf{\_Settings:} ρυθμίσεις έργου (Render Pipeline, Input, Tags/Layers, Physics).
+  \item \textbf{Scenes (additive):} διάσπαση σε υπο-σκηνές (Lighting/Geometry/Audio/UI) για μικρότερα diffs.
+  \item \textbf{Builds/Docs:} εκτός \texttt{Assets/}; τα builds δεν versionάρονται, τα docs ναι.
+\end{itemize}
+
+\subsection*{Ιεραρχία φακέλων }
+\begin{verbatim}
+Assets/
+  _Project/
+    Scripts/{Player,AI,Environment,Systems}
+    Prefabs/{Environment,Characters,UI}
+    Materials/  Shaders/  Textures/  VFX/
+    Audio/{Music,SFX,Voice}
+    Animation/{Characters,Environment}
+    UI/{Canvases,Sprites,Fonts}
+    Data/{ScriptableObjects,Localization}
+    Dialogue/  Quests/  Plugins/
+    Scenes/
+  _ExternalAssets/{AI_Assets,AssetStoreTools,ThirdParty}
+  _Settings/{RenderPipeline,Input,TagsAndLayers,Physics}
+Builds/   (εκτός VCS)    Docs/
+\end{verbatim}
+
+\subsection*{Αυτοματοποιημένη δημιουργία}
+Χρησιμοποιήθηκε το \textit{Editor script} \texttt{FolderStructureCreator.cs} το οποίο δημιουργεί τις παραπάνω διαδρομές και κάνει \texttt{AssetDatabase.Refresh()} για άμεση εμφάνιση στο Project Window. Το εργαλείο επιταχύνει την αρχικοποίηση, αποφεύγει λάθη ονοματοδοσίας και κρατά τη δομή συνεπή μεταξύ συνεργατών.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Blenderkit Pipeline.png}
+    \caption{Blenderkit Pipeline}
+    \label{fig:placeholder}
+\end{figure}
+\subsection*{Αυτόματος καθαρισμός «εξωτερικών» υφών (Textures\_External)}
+
+Κατά την αυτοματοποιημένη εισαγωγή από το Blender (\emph{Blender automata} Python script) παρατηρήθηκε ότι, μαζί με τα πραγματικά textures των μοντέλων, «περνούσαν» στο \texttt{Assets/3D Models/Textures\_External} και άσχετες εικόνες (π.χ. avatars δημιουργών BlenderKit, μικροεικονίδια/βέλη/Χ κ.λπ.). Για να παραμείνει καθαρό το project και να μην «φουσκώνει» άσκοπα το repo, υλοποιήθηκε Unity Editor εργαλείο καθαρισμού.
+
+\paragraph{Λειτουργία εργαλείου.}
+Από το μενού \menu{Tools $\rightarrow$ Clean External Textures} εκτελείται σάρωση του \texttt{Assets/3D Models/Textures\_External} και διαγράφονται αυτόματα ανεπιθύμητα αρχεία-εικόνες που εντοπίζονται με απλούς κανόνες ευρετικών: (α) ολόκληρο το όνομα αρχείου είναι αριθμητικό ή (β) το όνομα περιέχει τη λέξη \texttt{thumbnail}. Η διαγραφή γίνεται ως \emph{Asset delete} (ασφαλής διαγραφή μέσα από το Unity), και ακολουθεί \texttt{AssetDatabase.Refresh()} ώστε να ενημερωθεί το Project Window. 
+
+\paragraph{Κίνητρα \& οφέλη.}
+\begin{itemize}
+  \item \textbf{Υγιές repo:} αποφεύγονται «σκουπίδια» από third-party πηγές που δεν χρησιμοποιούνται ποτέ στα materials.
+  \item \textbf{Λιγότερα diffs/merges:} μειώνεται η τυχαιοποίηση εισαγωγών από εξωτερικά scripts.
+  \item \textbf{Σταθερότητα build:} λιγότερα assets προς επεξεργασία/εξαγωγή, ταχύτερα imports.
+\end{itemize}
+
+\paragraph{Οδηγίες χρήσης (workflow).}
+\begin{enumerate}
+  \item Τρέχω το \emph{Blender automata} export, εισάγω το μοντέλο στο Unity.
+  \item Εκτελώ \menu{Tools $\rightarrow$ Clean External Textures} για καθαρισμό του \texttt{Textures\_External}. 
+  \item Ελέγχω τα materials του αντικειμένου: εάν λείπει texture που όντως χρησιμοποιείται, το επαναφέρω από την πηγή.
+\end{enumerate}
+
+\paragraph{Σημειώσεις ασφαλείας.}
+Το εργαλείο περιορίζεται αποκλειστικά στον φάκελο \texttt{Assets/3D Models/Textures\_External} και βασίζεται σε συντηρητικά κριτήρια (\texttt{digits-only}, \texttt{thumbnail}). Για πρόσθετους κανόνες (π.χ. \texttt{profile}, \texttt{icon}) το φίλτρο επεκτείνεται εύκολα στο ίδιο script.
+
+\subsubsection{Συστήματα ελέγχου έκδοσης (VCS): Unity Version Control, Git \& GitHub}
+
+\paragraph*{Τί είναι VCS και γιατί το χρειαζόμαστε}
+Τα \textit{Version Control Systems (VCS)} επιτρέπουν την ιχνηλάτηση αλλαγών στον κώδικα και τα αρχεία ενός έργου, την ασφαλή συνεργασία πολλών ατόμων, την επιστροφή σε παλαιότερες εκδόσεις και τη δημιουργία «κλαδιών» (branches) για πειραματισμό χωρίς να διαταράσσεται η σταθερή έκδοση. Για έργα Unity, όπου συνυπάρχουν κώδικας και δυαδικά assets, το VCS είναι κρίσιμο για σταθερά builds και αναπαραγωγιμότητα.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{unityVCS.png}
+    \caption{unityVCS εργασίας}
+    \label{fig:placeholder}
+\end{figure}
+
+\paragraph*{Unity Version Control (Plastic SCM): ορισμός \& σύντομη ιστορική εισαγωγή}
+Το \textbf{Unity Version Control (UVC)}, γνωστό ιστορικά ως \textbf{Plastic SCM}, είναι σύστημα ελέγχου έκδοσης προσανατολισμένο σε game/real-time projects. Προσφέρει:
+\begin{itemize}
+  \item \textbf{GUI εργαλεία} ενσωματωμένα στο Unity Editor.
+  \item \textbf{File locking} για σκηνές/prefabs/δυαδικά (π.χ. \texttt{.unity}, \texttt{.prefab}, \texttt{.blend}), ώστε να αποφεύγονται συγκρούσεις.
+  \item \textbf{Branching/merging} με γνώση των Unity YAML αρχείων και εργαλεία οπτικής συγχώνευσης.
+\end{itemize}
+Ως προϊόν που εξελίχθηκε ειδικά για ομάδες game dev, η βασική του διαφοροποίηση είναι το \emph{κεντρικά διαχειριζόμενο locking} και οι ροές μεγάλων binary assets, όπου τα κλασικά εργαλεία επικεντρωμένα στον κώδικα (π.χ. Git) δυσκολεύονται χωρίς πρόσθετα.
+
+\paragraph*{Git: το καθιερωμένο DVCS}
+Το \textbf{Git} είναι \textit{distributed} VCS: κάθε clone περιέχει ολόκληρο το ιστορικό, επιτρέποντας γρήγορα branches, τοπικά commits και robust merging. Για Unity έργα λειτουργεί άριστα όταν:
+\begin{itemize}
+  \item Έχουμε \textbf{text serialization} (\texttt{Force Text}) και \textbf{visible meta files} για σταθερά GUIDs.
+  \item Χρησιμοποιούμε \textbf{Git LFS} για μεγάλα/δυαδικά αρχεία (textures, ήχος, βίντεο, \texttt{.fbx}, \texttt{.blend}).
+  \item Οργανώνουμε additive scenes και περιορίζουμε ταυτόχρονο editing στις ίδιες σκηνές.
+\end{itemize}
+
+\paragraph*{GitHub: φιλοξενία, συνεργασία, διανομή}
+Το \textbf{GitHub} παρέχει αποθετήρια Git με πρόσβαση, θέματα (Issues), Pull Requests, Actions για CI/CD και Releases για διανομή builds. Στο πλαίσιο της εργασίας:
+\begin{itemize}
+  \item Δημιουργήθηκε ιδιωτικό repo \texttt{Thesis\_Scripts} με καθαρό διαχωρισμό φακέλων (\texttt{Blender/}, \texttt{Scripts/}, \texttt{Unity/}) και πρόσφατα, περιγραφικά commits.
+  \item Τα Unity/Editor scripts και τα εργαλεία pipeline (\emph{Blender automata}, \emph{FolderStructureCreator}, \emph{Clean External Textures}) οργανώνονται σε υποφακέλους, ώστε να γίνονται εύκολα \textit{review} και επαναχρησιμοποίηση.
+  \item Οι μεγάλες βιβλιοθήκες/αρχεία μέσων κρατιούνται εκτός repo ή περνούν από \textbf{LFS} και \texttt{.gitignore} κανόνες, ώστε το ιστορικό να παραμένει ελαφρύ.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{github.png}
+    \caption{Github Εργασίας}
+    \label{fig:placeholder}
+\end{figure}
+
+\paragraph*{Γιατί επιλέχθηκε Git/GitHub (και πότε UVC)}
+Στην παρούσα εργασία προτιμήθηκε \textbf{Git/GitHub} λόγω:
+\begin{enumerate}
+  \item \textbf{Ευελιξίας κώδικα} (πολλά μικρά εργαλεία/Editor scripts).
+  \item \textbf{Διαδεδομένης συνεργασίας} (Pull Requests, code review, Actions για αυτόματα checks).
+  \item \textbf{Ευκολίας διανομής} (GitHub Releases \& tagging).
+\end{enumerate}
+
+Το \textbf{Unity Version Control} παραμένει άριστη επιλογή για μεγαλύτερες ομάδες με εκτενές binary περιεχόμενο και ανάγκη για \emph{strict locking} σε σκηνές/prefabs, ή όταν ζητείται κεντρικά διαχειριζόμενη ροή αρχείων μέσα από το Unity.
+
+\section{Enterprise Solutions της Unity: Gaming Services, DevOps \& LiveOps}
+
+ \textit{Σημείωση:} Στο παρόν έργο, λόγω περιορισμένου εύρους (solo developer) και εστίασης σε ένα playable tech-demo, \textbf{δεν} αξιοποίησα πρακτικά τις υπηρεσίες UGS/DevOps/LiveOps. Τις παρουσιάζω ωστόσο \textbf{συνοπτικά} επειδή θεωρούνται κρίσιμες για τη σύγχρονη παραγωγή παιχνιδιών, συνδέονται άμεσα με το αντικείμενο των σπουδών μου (MST/Management \& Technology) και έχουν ουσιαστικό αντίκτυπο στη βιομηχανία.
+ 
+
+\subsection{Unity Gaming Services, DevOps \& LiveOps — Ορισμοί, δυνατότητες, χρήση}
+
+\paragraph*{Unity Gaming Services (UGS) -τι είναι}
+Τα \textbf{Unity Gaming Services} είναι μια ενοποιημένη πλατφόρμα υπηρεσιών για να \emph{χτίζεις, εξελίσσεις και κλιμακώνεις} παιχνίδια: multiplayer/δικτύωση, backend, LiveOps/Analytics και DevOps, ώστε να μην χρειάζεται να συντηρείς δική σου υποδομή. Παρέχει κοινό \emph{Services Core} για ενιαία αρχικοποίηση μέσα από τον client και CLI για αυτοματοποιημένη διαχείριση ρυθμίσεων μέσω γραμμής εντολών.(\href{https://docs.unity.com/ugs/en-us/manual/overview/manual/getting-started}{https://docs.unity.com/ugs/en-us/manual/overview/manual/getting-started})
+
+\paragraph{Τι μπορώ να κάνω με UGS (ενδεικτικά).}
+\begin{itemize}
+  \item \textbf{Multiplayer/Network:} Relay, Lobby, Matchmaker, Multiplay hosting.
+  \item \textbf{Backend:} Authentication, Cloud Save (προοδευτικά δεδομένα), Cloud Code (serverless λογική), Economy, Leaderboards.
+  \item \textbf{LiveOps/Analytics:} Analytics dashboards, Game Overrides/Remote Config για A/B testing \& δυναμικές ρυθμίσεις, Diagnostics για crash/error monitoring, Cloud Content Delivery για over-the-air περιεχόμενο.
+\end{itemize}
+Οι υπηρεσίες ενεργοποιούνται/ρυθμίζονται από το Unity Dashboard ανά έργο και κλιμακώνονται καθώς μεγαλώνει το παιχνίδι.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{unityGS.png}
+    \caption{Δυνατότητες unityGS }
+    \label{fig:placeholder}
+\end{figure}
+
+\subsection*{Unity DevOps — ορισμός \& περιγραφή}
+Το \textbf{Unity DevOps} είναι σύνολο εργαλείων/ροών για αποδοτική ανάπτυξη και ασφάλεια έργων, με δύο βασικά συστατικά: \textbf{Unity Version Control (UVCS, Plastic SCM)} για version control (optimized για μεγάλους δυαδικούς πόρους \& file locking) και \textbf{Build Automation} για CI/CD builds σε cloud χωρίς να συντηρείς build farm. Περιλαμβάνει έννοιες όπως \emph{pipelines} (στάδια build/test/deploy) και \emph{artifacts} (παραγόμενα πακέτα), καθώς και \emph{κόστος/usage reporting} στο Unity Cloud.
+
+\paragraph{Τι μπορώ να κάνω με Unity DevOps.}
+\begin{itemize}
+  \item \textbf{Έλεγχος έκδοσης (UVCS):} branching/merging με εργαλεία για artists \& programmers, locks σε \texttt{.unity}/\texttt{.prefab}/\texttt{.blend} για αποφυγή conflicts.
+  \item \textbf{Cloud CI/CD:} αυτόματα builds για πολλές πλατφόρμες, triggers σε κάθε commit/tag, αποθήκευση artifacts, διανομή σε testers.
+  \item \textbf{Διακυβέρνηση:} ρόλοι/πρόσβαση ανά Organization \& Project, παρακολούθηση κόστους/χρήσης.
+\end{itemize}
+
+ Με λίγα βήματα συνδέεις το Project στο Unity Cloud και ρυθμίζεις pipelines για γρήγορες, επαναλαμβανόμενες κυκλοφορίες. (\href{https://docs.unity.com/ugs/manual/devops/manual/unity-devops-home}{https://docs.unity.com/ugs/manual/devops/manual/unity-devops-home})
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{unitydevops.png}
+    \caption{unity DevOps}
+    \label{fig:placeholder}
+\end{figure}
+
+\subsection*{Unity LiveOps — ορισμός \& περιγραφή}
+Το \textbf{Unity LiveOps} αφορά \emph{post-launch λειτουργίες}: κατανόηση συμπεριφοράς παικτών, απομακρυσμένες ρυθμίσεις/πειράματα, σταθερότητα, και διανομή περιεχομένου χωρίς νέο build. Συνδυάζει \textbf{Analytics} (prebuilt dashboards, real-time δεδομένα), \textbf{Game Overrides/Remote Config} (A/B testing \& στοχευμένες αλλαγές), \textbf{Diagnostics} (σφάλματα/crashes σε πραγματικό χρόνο) και \textbf{Cloud Content Delivery} (ασύρματες ενημερώσεις assets). Επιπλέον, \textbf{Cloud Code} \& \textbf{Cloud Save} επιτρέπουν cloud λογική και επίμονη αποθήκευση δεδομένων παικτών.
+
+\paragraph{Τι μπορώ να κάνω με Unity LiveOps.}
+\begin{itemize}
+  \item \textbf{Μετρήσεις \& insights:} ορίζω events, βλέπω funnels/retention, εντοπίζω σημεία εγκατάλειψης.
+  \item \textbf{Πειράματα \& εξατομίκευση:} αλλάζω δυσκολία, οικονομία, UI flags, χωρίς νέο build, σε \emph{segments} χρηστών. 
+  \item \textbf{Σταθερότητα:} παρακολουθώ exceptions/crashes και προτεραιοποιώ διορθώσεις. 
+  \item \textbf{Διανομή περιεχομένου:} ανεβάζω/σπρώχνω νέα assets/chapters OTA με CCD. 
+  \item \textbf{Cloud λογική \& δεδομένα:} τρέχω serverless rules (Cloud Code) \& αποθηκεύω προόδους (Cloud Save). (\href{https://docs.unity.com/ugs/en-us/manual/overview/manual/unity-gaming-services-home}{https://docs.unity.com/ugs/en-us/manual/overview/manual/unity-gaming-services-home})
+\end{itemize}
+
+\subsection*{Πότε διαλέγω (γρήγορος οδηγός)}
+\begin{itemize}
+  \item \textbf{UGS} όταν χρειάζεσαι ενιαίο οικοσύστημα backend/multiplayer/LiveOps/DevOps που κλιμακώνεται με το παιχνίδι σου.
+  \item \textbf{DevOps} όταν θέλεις cloud CI/CD \& VCS προσαρμοσμένο σε game assets (UVCS) και αυτοματοποίηση κυκλοφοριών. 
+  \item \textbf{LiveOps} όταν έχεις «ζωντανό» παιχνίδι και θέλεις να μετράς, να πειραματίζεσαι και να διανέμεις περιεχόμενο χωρίς νέα builds. 
+\end{itemize}
+
+%---------------- ΚΕΦΑΛΑΙΟ 4 ----------------------------
+\chapter{Υλοποίηση Παιχνιδιού: Σκηνή Πόλης}
+\section{Σχεδιασμός σκηνής και ατμόσφαιρας}
+
+\subsection*{Στόχος}
+Να αποδοθεί ένας κεντρικός δρόμος ασιατικής μητρόπολης στα 80s, όπου συνυπάρχει η \textbf{αντίθεση παλιού–νέου}: χαμηλά, παλαιά εμπορικά με πρόσοψη τούβλου, κλιματιστικά και πινακίδες νέον απέναντι σε \textbf{μοντέρνους γυάλινους ουρανοξύστες} στο βάθος. Η ατμόσφαιρα είναι \textit{μελαγχολική νύχτα μετά τη βροχή} (υγρή άσφαλτος, απαλή ομίχλη), με έμφαση στις αντανακλάσεις και στις τσέπες κορεσμένου κόκκινου από τα νέον.
+
+\subsection*{Αναφορές \& mood}
+Κύριες επιρροές το οπτικό ύφος του Wong Kar-wai (\textit{Chungking Express}, \textit{Fallen Angels}) και το ρομαντικό νεο-νουάρ \textit{A Moment of Romance}. Συνδυάζονται η \textit{αστική μοναξιά} με νεοντικές πινελιές, υγρές επιφάνειες και συμπιεσμένη προοπτική, ενώ η \textbf{μοτοσικλέτα} λειτουργεί ως σύμβολο φυγής/οικειότητας μέσα στο κρύο, γυάλινο τοπίο. Το mood στοχεύει σε \textit{μελαγχολική ηρεμία πριν το γεγονός}: αργές, χαμηλές κάμερες στο ύψος του πεζοδρομίου, παλμοί κόκκινου νέον πάνω σε ψυχρά γκρι/κυανό, λεπτή ομίχλη που «πλένει» τα βάθη και αναδεικνύει τις αντανακλάσεις. Η ηχητική παλέτα μένει κυρίως \textit{διηγητική} (σταθερή βροχή), ώστε οι σπάνιες μουσικές φράσεις να αποκτούν δραματικό βάρος.
+
+\subsection*{Χωροθέτηση \& σύνθεση}
+Ο δρόμος λειτουργεί ως \textbf{αστικό φαράγγι} με έντονες γραμμές φυγής προς τα πάνω (ουρανοξύστες). Στο επίπεδο του πεζοδρομίου τοποθετούνται \textbf{αναγνωρίσιμα σημεία εστίασης} (στάση λεωφορείου, μοτοσικλέτα, γυναικείος χαρακτήρας) ώστε να αγκυρώνεται η αφήγηση. Η διάταξη των κόκκινων νέον πινακίδων ακολουθεί ρυθμό «παλμών» κατά μήκος της όψης, ενώ οι λάμπες δρόμου ορίζουν συνεχή οδηγό φωτός πάνω στην υγρή άσφαλτο.
+
+\subsection*{Παλέτα, φωτισμός \& υλικότητα}
+Χρωματική παλέτα \textbf{ψυχρών τόνων} (γκρι, μπλε-ανθρακί) με \textbf{θερμές εκρήξεις κόκκινου} νέον. Στόχος υλικότητας: \textit{υγρές επιφάνειες} (high specular/clearcoat), μικρά σταγονίδια σε τζάμια και μεταλλικά στοιχεία βιτρίνων, ώστε να ενισχύονται οι αντανακλάσεις. Για να "δέσει" το ύφος, εφαρμόζονται ήπιο \textit{bloom} με χαμηλό threshold, ελεγχόμενη \textit{exposure compensation} τύπου blue-hour, διακριτικό \textit{film grain} και \textit{height fog} που τονίζει τις γραμμές φυγής των ουρανοξυστών.
+
+\subsection*{Συνολική εμπειρία}
+Ο παίκτης βιώνει μια \textit{ήσυχη αλλά ηλεκτρισμένη} νυχτερινή σκηνή, όπου το παλιό εμπορικό μέτωπο και οι νέοι πύργοι συνυπάρχουν οπτικά, υπογραμμίζοντας το κεντρικό μοτίβο του έργου: \textbf{μεταξύ δύο κόσμων} (παρελθόν–παρόν, προσωπικό–αστικό).
+
+
+\section{Ενσωμάτωση χαρακτήρα και animations}
+\subsection*{Pipeline \& Rig}
+Ο γυναικείος χαρακτήρας \textbf{Amalia} εισήχθη ως \emph{Humanoid} avatar και συνδέθηκε με \textbf{Animator Controller} (\texttt{Amalia.controller}). Στο Inspector ο Animator είναι σε \emph{Update Mode: Normal} και \emph{Culling Mode: Always Animate}, ώστε να αποφεύγονται παύσεις σε εκτός-κάμερας frames. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{unity_amaliaprefabAvatar.png}
+    \caption{unity: amalia prefab και το  Avatar της}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}[H]
+        \centering
+        \includegraphics[width=0.5\linewidth]{inspector animator.png}
+        \caption{inspector animator}
+        \label{fig:placeholder}
+    \end{figure}
+
+
+Η βασική στάση είναι ένα \texttt{Idle} clip (Base Layer), ενώ οι εκφράσεις προσώπου τρέχουν σε ξεχωριστό \textbf{Face Layer}.
+
+\subsection*{Δομή Animator}
+\begin{itemize}
+  \item \textbf{Base Layer:} ελάχιστη κατάσταση \texttt{Idle 0} (Entry $\rightarrow$ Idle) για σταθερότητα.
+  \item \textbf{Face Layer:} ξεχωριστό layer για \emph{facial animations}; ενεργοποιείται σε \emph{weight = 1.0} και αναπαράγει την κατάσταση \texttt{Monologue\_Good} όταν ζητηθεί.
+\end{itemize}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{base layer.png}
+    \caption{base layer}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Face layer.png}
+    \caption{Face layer}
+    \label{fig:placeholder}
+\end{figure}
+
+\subsection*{Trigger για facial animation}
+Για να ξεκινά ο μονόλογος προσώπου σε συγκεκριμένο σημείο της σκηνής, χρησιμοποιήθηκε \textbf{Editor-side trigger} με \texttt{Box Collider (isTrigger)} και το script \texttt{AmaliaMonologueTrigger}. Το script:
+(α) εντοπίζει το \textit{Face Layer} με όνομα, (β) θέτει \emph{layer weight = 1}, (γ) ελέγχει ότι υπάρχει το state \texttt{Monologue\_Good}, και (δ) στο \texttt{OnTriggerEnter} (όταν ο \texttt{Player} περάσει) κάνει \texttt{Animator.Play} στο σωστό layer/time~0 και απενεργοποιεί το collider για να μην ξαναπαίξει.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{molonogue trigger box.png}
+    \caption{molonogue trigger box}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=1\linewidth]{monologue Trigger inspector.png}
+    \caption{monologue Trigger inspector}
+    \label{fig:placeholder}
+\end{figure}
+
+Παρακάτω φαίνεται το απόσπασμα script που πυροδοτεί το trigger:
+\begin{lstlisting}[style=code, caption={Trigger ενός facial state}, label={lst:monologue-trigger}]
+void OnTriggerEnter(Collider other)
+    {
+        if (fired) return;
+        if (!other.CompareTag("Player")) return;
+
+        if (faceLayerIndex < 0) { Debug.LogError("Face layer not found."); return; }
+        if (!amaliaAnimator.HasState(faceLayerIndex, faceStateHash))
+        {
+            Debug.LogError($"State '{faceStateName}' not found on layer '{faceLayerName}'.");
+            return;
+        }
+
+\end{lstlisting}
+
+\subsection*{Trigger για voice line \& συγχρονισμός}
+Η ηχητική γραμμή τρέχει μέσω \texttt{VoiceLineTrigger}. Το component διαθέτει επιλογή \texttt{oneShot} και \texttt{delaySeconds} για ελεγχόμενη έναρξη. Στο \texttt{Reset()} προστίθεται αυτόματα \emph{kinematic Rigidbody} ώστε οι Unity triggers να πυροδοτούν αξιόπιστα. Στο \texttt{OnTriggerEnter} (μόνο για \texttt{Player}) γίνεται \texttt{Enqueue} της επιλεγμένης \texttt{VoiceLine} στον \texttt{VoiceLinePlayer}. Για τον συγκεκριμένο μονόλογο εφαρμόστηκε \emph{delay $\approx$ 3.5s} ώστε να κλειδώσει οπτικά η έκφραση πριν ακουστεί η φωνή.
+
+\subsection*{Ροή γεγονότων στη σκηνή}
+\begin{enumerate}
+  \item Ο παίκτης πλησιάζει τη στάση λεωφορείου (\emph{narrative focus}: μοτοσικλέτα, χαρακτήρας).
+  \item \texttt{AmaliaMonologueTrigger}: ενεργοποιεί \texttt{Face Layer} $\rightarrow$ \texttt{Monologue\_Good}.
+  \item \texttt{VoiceLineTrigger}: μετά από \texttt{delaySeconds} ξεκινά η \textbf{voice line} του μονολόγου.
+\end{enumerate}
+
+\subsection*{Σημεία προσοχής (QA)}
+\begin{itemize}
+  \item \textbf{Ονοματοδοσία}: τα \textit{layer/state names} πρέπει να ταιριάζουν ακριβώς με το Animator (\texttt{Face Layer}, \texttt{Monologue\_Good}).
+  \item \textbf{Tags}: ο παίκτης πρέπει να έχει \texttt{Tag = Player} για να πυροδοτούν οι triggers. 
+  \item \textbf{Μοναδικότητα}: τα triggers είναι \emph{one-shot} (απενεργοποίηση collider ή GameObject) ώστε να μην επαναλαμβάνεται το event. 
+  \item \textbf{Συγχρονισμός ήχου/προσώπου}: χρήση \texttt{delaySeconds} για να ξεκινά η φωνή μετά το facial cue.
+\end{itemize}
+
+\section{Χρήση HDRP για φωτισμό, όγκους και σκιές}
+\subsection*{Σχεδιαστική αρχή}
+Ο φωτισμός στοχεύει σε «νυχτερινή, μετά τη βροχή» αισθητική με ψυχρή σεληνιακή βάση και θερμές κόκκινες εξάρσεις από νέον. Η υλικότητα (υγρή άσφαλτος/τζάμια) αναδεικνύεται μέσω αντανάκλασης και ελεγχόμενης ομίχλης.
+
+\subsection*{Light rig}
+\begin{itemize}
+  \item \textbf{Directional Moon Light} (Realtime): ψυχρή θερμοκρασία \(\sim\) \textbf{7600K}, χαμηλή \textbf{Intensity} (σε Lux) ώστε να λειτουργεί ως «σεληνιακό fill». \textit{Volumetrics} ενεργό (\textbf{Enable}, \textbf{Multiplier} κοντά στο 0.8) για ελαφρύ ατμοσφαιρικό πάχος. \textbf{Shadow Map} ενεργό, \textbf{Resolution: High (4096)} με \textit{Update Every Frame}.
+  \item \textbf{Street/Neon lights}: τοπικά \emph{point/spot} με μικρή εμβέλεια και \textit{contact shadows} για ανάδειξη μικροανάγλυφου σε προσόψεις/πινακίδες.
+\end{itemize}
+
+\subsection*{Volumes (Global \& Fog)}
+Χρησιμοποιούνται δύο volumes:
+\begin{enumerate}
+  \item \textbf{Global Volume} (Mode: Global) με \emph{post} και γενικές ρυθμίσεις: \textit{Physically Based Sky}, \textit{Visual Environment}, \textit{Exposure}, \textit{Bloom}, \textit{SSGI}, \textit{SSR}, \textit{Micro/Contact Shadows}, \textit{Indirect Lighting Controller}, \textit{Color Adjustments}, \textit{White Balance}, \textit{Shadows–Midtones–Highlights}. Σκοπός: ενιαία βάση αντίληψης φωτός/αντίθεσης \& έλεγχος έμμεσου φωτισμού.
+  \item \textbf{Fog Global Volume} (ξεχωριστό profile) με \textit{Visual Environment + Physically Based Sky + Fog}. Σκοπός: ανεξάρτητος, «λεπτός» έλεγχος της ομίχλης (ύψος/πυκνότητα) ώστε να ξεπλένονται τα βάθη χωρίς να χάνεται το silhouette των ουρανοξυστών.
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Global Volume.png}
+    \caption{Global Volume}
+    \label{fig:placeholder}
+\end{figure}
+
+\subsection*{Ρυθμίσεις post (ενδεικτικές επιλογές)}
+\begin{itemize}
+  \item \textbf{Ουρανός \& Περιβάλλον:} Physically Based Sky για συνεπές νυχτερινό υπόβαθρο.
+  \item \textbf{Έκθεση (Exposure):} σταθερή, ώστε τα νέον να μένουν φωτεινά χωρίς να «καίνε».
+  \item \textbf{Bloom:} ήπιο φωτοστέφανο για λάμπες/νέον, χωρίς υπερβολικό θάμπωμα.
+  \item \textbf{SSGI \& SSR:} ενεργά για έμμεσο φως και καθαρές αντανακλάσεις σε υγρές επιφάνειες.
+  \item \textbf{Micro/Contact Shadows:} λεπτοσκίαση για να «γράφουν» οι υφές προσόψεων και πινακίδων.
+  \item \textbf{Έμμεσο φως (Indirect):} ελαφρώς ενισχυμένο για πιο ζωντανά μεσαία τονικά επίπεδα.
+  \item \textbf{Χρωματικές διορθώσεις:} ψυχρό υπόβαθρο ώστε το κόκκινο νέον να ξεχωρίζει.
+
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Post Processing OFF.png}
+    \caption{Post Processing OFF}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{SSGI OFF.png}
+    \caption{SSGI OFF}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{SSGI ON.png}
+    \caption{SSGI ON}
+    \label{fig:placeholder}
+\end{figure}
+\subsection*{Αντανακλάσεις \& probes}
+\begin{itemize}
+  \item \textbf{Reflection Probe (Baked)}: \textit{Influence Box} ~\(\mathbf{200\times200\times200}\) γύρω από την κύρια περιοχή σκηνής για σταθερή βάση περιβάλλοντος.
+  \item \textbf{SSR}: συμπληρώνει τις real-time αντανακλάσεις για την «υγρή» αίσθηση στο οδόστρωμα.
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Reflections Street.png}
+    \caption{Reflections Street}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Reflections Pavement.png}
+    \caption{Reflections Pavement}
+    \label{fig:placeholder}
+\end{figure}
+
+\subsection*{Ομίχλη \& ουρανός}
+\begin{itemize}
+  \item \textbf{Physically Based Sky}: συντονισμένος με το \emph{Directional Moon Light} για συνεπή \emph{skydome}.
+  \item \textbf{Fog}: ήπια πυκνότητα/ύψος για «ξεπλυμένα» βάθη και ανάδειξη των φωτεινών σημείων (νέον, λάμπες).
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{FOG OFF.png}
+    \caption{FOG OFF}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{FOG ON.png}
+    \caption{FOG ON}
+    \label{fig:placeholder}
+\end{figure}
+\subsection*{Βροχή (Particle System)}
+\begin{itemize}
+  \item \textbf{Renderer:} \emph{Stretched Billboard} με custom \texttt{Rain} material — δίνει «γραμμή»/ίχνος στα σταγονίδια.
+  \item \textbf{Velocity over Lifetime:} έντονη καθοδική \(\mathrm{Y}<0\) με μικρό \(\mathrm{Z}>0\) για πλάγιο άνεμο.
+  \item \textbf{Collision (World):} ενεργό ώστε οι στάλες να «σβήνουν» κοντά στο έδαφος και να προκύπτουν αξιόπιστες SSR αντανακλάσεις.
+  \item \textbf{Local space \& Looping:} σταθερή, οικονομική βροχή γύρω από την κάμερα.
+  \item \textbf{SUB EMITTER SPLASH}: πολύ μικρή διάρκεια (0.2–0.4s), μικρό Start Size, χωρίς σκιές, Emission χαμηλό (2–6) για οικονομία.
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Rain Particle System.png}
+    \caption{Rain Particle System}
+    \label{fig:placeholder}
+\end{figure}
+
+\subsection*{Σκιές \& σταθερότητα}
+\begin{itemize}
+  \item \textbf{Directional Shadows:} \emph{High 4096} για καθαρά contours σε αρχιτεκτονικά στοιχεία. \textit{Contact Shadows} για μικρολεπτομέρειες.
+  \item \textbf{Flicker-free πρακτικές:} σταθερό \emph{shadow distance} ανά preset, αποφυγή υπερβολικού jitter, σταθερές \emph{cascade} τιμές για να μην τρεμοπαίζουν οι λάμπες δρόμου.
+\end{itemize}
+
+\subsection*{Σύνοψη αποτελέσματος}
+Ο συνδυασμός ψυχρής σεληνιακής βάσης, θερμών νέον, διακριτικής ομίχλης και ισχυρών αντανακλάσεων αποδίδει το ζητούμενο \textit{νυχτερινό αστικό 80s} ύφος: υγρές επιφάνειες που "πιάνουν" το φως, καθαρές σιλουέτες κτηρίων και ατμόσφαιρα μελαγχολικής ηρεμίας.
+
+\section{Ανάλυση απόδοσης σκηνής}
+\subsection*{Μετρήσεις (Display Stats — Street)}
+Για κάθε preset καταγράφηκαν δύο στιγμιότυπα: \textbf{Good} (υψηλότερη απόδοση στη διαδρομή) και \textbf{Bad} (χαμηλότερη απόδοση). Οι τιμές είναι \emph{Avg} από HDRP Display Stats.
+
+\begin{table}[H]
+  \noindent
+  \makebox[0pt][l]{%
+    \begin{tabular}{@{}llrrrrrr@{}}
+\textbf{Preset} & \textbf{Δείγμα} & \textbf{FPS} & \textbf{FT (ms)} & \textbf{GPU (ms)} & \textbf{CPU Main} & \textbf{CPU Render} & \textbf{CPU Present} \\
+\hline
+Performant & Good & \textbf{49.5} & \textbf{20.66} & \textbf{19.44} & 8.46 & 5.73 & 6.96 \\
+           & Bad  & 25.8 & 40.18 & 32.44 & 22.59 & 16.44 & 9.77 \\
+Balanced   & Good & \textbf{51.2} & \textbf{20.24} & \textbf{18.26} & 8.73 & 6.72 & 5.89 \\
+           & Bad  & 25.6 & 41.45 & 34.74 & 20.42 & 16.75 & 13.04 \\
+High       & Good & \textbf{34.5} & \textbf{31.12} & \textbf{27.20} & 10.78 & 7.16 & 12.80 \\
+           & Bad  & 13.6 & 77.48 & 70.21 & 26.10 & 24.09 & 41.36 \\
+    \end{tabular}%
+  }
+\end{table}
+
+\subsection*{Ερμηνεία (εύρος \& μεταβλητότητα)}
+\begin{itemize}
+  \item \textbf{Performant:} \(\sim\)26–50 FPS \(\Rightarrow\) μεταβλητότητα \(\times\)1.9. Κυρίως \textit{GPU-bound} (GPU~19–32\,ms).
+  \item \textbf{Balanced:} \(\sim\)26–51 FPS \(\Rightarrow\) μεταβλητότητα \(\times\)2.0. Στα «Bad» frames το GPU φτάνει ~35\,ms.
+  \item \textbf{High:} \(\sim\)14–35 FPS \(\Rightarrow\) μεταβλητότητα \(\times\)2.5. Ισχυρά \textit{GPU-bound} τμήματα (GPU~70\,ms) με υψηλό \textit{Present Wait}.
+\end{itemize}
+
+\subsection*{Τι προκαλεί τα Good/Bad σημεία (παρατήρηση σκηνής)}
+\begin{itemize}
+  \item \textbf{Bad segments:} μακρινά κάδρα με πολλές ανακλάσεις (υγρή άσφαλτος/τζάμια), πολλά μικρά φώτα (νέον/βιτρίνες) και πυκνή βροχή μπροστά στην κάμερα \(\Rightarrow\) άνοδος \textit{SSR/SSGI}, \textit{fill-rate} και \textit{overdraw}.
+  \item \textbf{Good segments:} πιο «κλειστά» κάδρα προς σκοτεινότερες επιφάνειες, λιγότερες ανακλάσεις/πληροφορία στο βάθος και μικρότερη συνεισφορά particles.
+\end{itemize}
+
+\subsection*{Συμπέρασμα}
+Η σκηνή είναι κυρίως \textbf{GPU-bound}· κάθε preset παρουσιάζει εύρος απόδοσης ανάλογα με το κάδρο: όταν αυξάνονται οι αντανακλάσεις/φώτα/particles, το \emph{GPU Frame} ανεβαίνει και πέφτει το FPS. Στο \emph{Performant/Balanced} η εμπειρία κινείται γύρω από ~50 FPS στα «καλά» τμήματα και ~26 FPS στα «βαριά»· στο \emph{High} η εικόνα είναι πιο ακριβή αλλά με εμφανέστερες πτώσεις.
+
+%---------------- ΚΕΦΑΛΑΙΟ 5 ----------------------------
+\chapter{Υλοποίηση Παιχνιδιού: Σκηνή Δάσους}
+\section{Δημιουργία φυσικού τοπίου με Unity Terrain + HDRP Foliage}
+Για τη σκηνή \textbf{Forest} χρησιμοποίησα το \textbf{Unity Terrain System}. Αρχικά, με το \textbf{Stamp System} (Terrain Tools) διαμόρφωσα τη \textit{μορφολογία} του εδάφους,(λοφίσκους, κοιλότητες και περάσματα) ρυθμίζοντας ένταση/κλίμακα στα stamps μέχρι να πετύχω το επιθυμητό ανάγλυφο. Στη συνέχεια, με το \textbf{Paint Texture} όρισα τα \textit{terrain layers} (χώμα, γρασίδι, βράχος) και έκανα blending με βούρτσες για μονοπάτια και μεταβάσεις υλικών.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Stamp Terrain.png}
+    \caption{Stamp Terrain}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Τελικό terrain.png}
+    \caption{Τελικό terrain}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Paint Terrain.png}
+    \caption{Paint Terrain}
+    \label{fig:placeholder}
+\end{figure}
+Για τη βλάστηση αξιοποίησα το \textbf{Paint Trees} (\emph{Place Trees}) του Terrain ώστε να «φυτέψω» μαζικά \textit{assets δέντρων και φυτών} από το \textbf{Book of the Dead}. Ενεργοποίησα τυχαία παραλλαγή (ύψος/πλάτος/περιστροφή) και ρύθμισα πυκνότητες ανά είδος για πιο φυσική κατανομή. Τα assets διαθέτουν \textit{LOD Groups}, οπότε προσαρμόζονται αυτόματα με την απόσταση, διατηρώντας ποιότητα κοντά στην κάμερα και απόδοση στο βάθος.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Terrain Tree system.png}
+    \caption{Terrain Tree system}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{foliage example.png}
+    \caption{foliage example}
+    \label{fig:placeholder}
+\end{figure}
+
+
+\subsection*{Καθαρισμοί \& συμβατότητα Book of the Dead (HDRP)}
+Επειδή τα assets προέρχονται από παλαιότερη έκδοση HDRP, πριν τα χρησιμοποιήσω έκανα \textbf{migration/cleanup}:
+\begin{itemize}
+  \item \textbf{Shaders/Materials:} σε ορισμένα materials εμφανιζόταν \texttt{\#error}. Άνοιξα τα \emph{Shader Graphs}, όρισα \textbf{Active Target = HDRP}, αφαίρεσα legacy κόμβους και επανασύνδεσα τα \emph{normal maps} σε \textbf{Tangent space}. Όπου δεν απαιτούνταν custom graph, αντικατέστησα με \textbf{HDRP/Lit}.
+  \item \textbf{Missing scripts:} σε prefabs/LOD children υπήρχαν \emph{Missing (Mono Script)} που ήταν πλέον \emph{redundant}. Τα αφαίρεσα, κρατώντας μόνο \textbf{LOD Groups} και \textbf{colliders}.
+  \item \textbf{LOD έλεγχος:} επαλήθευσα cross-fade \& αποστάσεις ώστε βράχοι/φυτά να αλλάζουν LOD προβλέψιμα.
+  \item \textbf{Reimport/Consistency:} έκανα \emph{Reimport} σε meshes/materials και γρήγορο οπτικό έλεγχο φωτισμού για ευθυγράμμιση με το τρέχον HDRP profile.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{# shader error.png}
+    \caption{# shader error}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{BOTD SCRIPT MISSING lod preview.png}
+    \caption{BOTD SCRIPT MISSING lod preview}
+    \label{fig:placeholder}
+\end{figure}
+
+ Με αυτά τα βήματα εξαφανίστηκαν τα shader errors και τα \emph{missing script} warnings, και τα prefabs έγιναν \textbf{σταθερά} και έτοιμα για χρήση με \textbf{Paint Texture} \& \textbf{Paint Trees} στο Terrain.
+
+
+\section{Δημιουργία assets με φωτογραμμετρία (RealityScan, Meshroom)}
+\subsection*{Παράδειγμα από τη βιομηχανία: \emph{The Vanishing of Ethan Carter} (2014)}
+Ο τίτλος των The Astronauts αποτέλεσε ορόσημο για την είσοδο της φωτογραμμετρίας στα παιχνίδια: οι δημιουργοί σκάνναραν πραγματικές τοποθεσίες/αντικείμενα (δεκάδες έως εκατοντάδες φωτογραφίες ανά asset), ανακατασκεύασαν υψηλόπυκνα meshes (εκατομμύρια τρίγωνα) με λογισμικό τύπου Agisoft PhotoScan και, μέσω \emph{retopology}, UV projection και baking, παρήγαγαν game-ready μοντέλα με φυσικό \emph{wear \& tear} που δύσκολα επιτυγχάνεται με κλασική μοντελοποίηση. Η επιτυχία αυτή, μαζί με τη μετέπειτα εκτενή υιοθέτηση από στούντιο όπως η DICE, σηματοδότησε στροφή σε pipelines που συνδυάζουν φωτογραμμετρία, PBR υλικά και αυτοματοποιήσεις στην επεξεργασία. (Use of Photogrammetry in Video Games: A Historical Overview Wilhelmina Statham)
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{VAnishing of Ethan Carter example.jpg}
+    \caption{VAnishing of Ethan Carter example}
+    \label{fig:placeholder}
+\end{figure}
+
+\subsection*{Δικό μου pipeline (επισκόπηση)}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Photogrammetry Workflow Pipeline.png}
+    \caption{Photogrammetry Workflow Pipeline}
+    \label{fig:placeholder}
+\end{figure}
+
+Στη δική μου εργασία αξιοποίησα ένα \textbf{ελαφρύ pipeline φωτογραμμετρίας} βασισμένο στο \emph{RealityScan} (mobile \& desktop): φωτογράφιση με smartphone $\rightarrow$ μεταφορά στο cloud/Google Drive $\rightarrow$ επεξεργασία/καθαρισμός (\emph{alignment, control points, lasso cleanup}) στο RealityScan Desktop $\rightarrow$ εξαγωγή \texttt{fbx} $\rightarrow$ εισαγωγή σε Unity.
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Realityscan App.jpg}
+    \caption{Realityscan App}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{realityscan app Quality view.jpg}
+    \caption{realityscan app Quality view}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{fountain_pc_render.png}
+    \caption{fountain pc render}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{log_pc_render.png}
+    \caption{log pc render}
+    \label{fig:placeholder}
+\end{figure}
+
+
+
+Γενική παρατήρηση: αντικείμενα με έστω και μικρή \textbf{κίνηση} (π.χ.\ φύλλωμα, υφάσματα) ή με \textbf{διαφάνεια/ανακλαστικότητα} (γυαλί, νερό, γυαλιστερές επιφάνειες) οδηγούν συχνά σε αποτυχίες στο alignment και σε «θολά» ή διάτρητα meshes, καθιστώντας τα αποτελέσματα μη αξιόπιστα για φωτογραμμετρία. Στην περίπτωση ενός φυτού, ακόμη και η ελάχιστη κίνηση από τον αέρα προκάλεσε αστοχίες στο alignment (ghosting/«θολά» φύλλα) και τρύπιο mesh, με αποτέλεσμα μη αξιοποιήσιμο μοντέλο.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{treelet_pc_render.png}
+    \caption{treelet pc render}
+    \label{fig:placeholder}
+\end{figure}
+\subsection*{Ποιότητα αποτυπώματος: RealityScan mobile vs Desktop}
+Παρατήρησα αισθητή διαφορά ανάμεσα στα μοντέλα που παράγει το \textbf{mobile app} (cloud render) και στο \textbf{RealityScan Desktop}. Στο side-by-side των κορμών  το \textbf{desktop αποτέλεσμα} ,ο πιο «σκούρος» κορμός, είναι καθαρότερο και πιο λεπτομερές.
+
+\begin{itemize}
+  \item \textbf{Mobile (cloud):} γρήγορη διαδικασία, αλλά πιο επιθετικό decimation και "στραγγισμένες" υφές· εμφανίζονται θολώματα/ραφές και μικρές τρύπες σε περίπλοκα σημεία.
+  \item \textbf{Desktop:} πλήρης έλεγχος (\emph{alignment, control points, masking/lasso}) και τοπικό meshing/texture bake με μεγαλύτερη τεξελική πυκνότητα· καλύτερη συνέχεια UV, λιγότερα artefacts, πιο πειστικό normal.
+\end{itemize}
+
+Συνεπώς, για \textbf{hero assets} και κοντινά πλάνα επιλέγω \emph{RealityScan Desktop}, ενώ το mobile αποτέλεσμα είναι επαρκές για \textbf{background props} ή γρήγορα δοκιμαστικά.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{log_phoneVSpc_front.png}
+    \caption{log phone VS pc front}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{log_phoneVSpc_back.png}
+    \caption{log phone VS pc back}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{log_phoneVSpc_above.png}
+    \caption{log phone VS pc above}
+    \label{fig:placeholder}
+\end{figure}
+Εδώ βλέπουμε ένα από τα τελικά αποτελέσματα: ο κορμός και το κομμένο ξύλο από φωτογραμμετρία \textbf{δένουν αρμονικά} με τα υπόλοιπα μη-φωτογραμμετρικά assets, χάρη στη σωστή προσαρμογή κλίμακας, albedo και χαρτών roughness/normal.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Final Result.png}
+    \caption{Final Result}
+    \label{fig:placeholder}
+\end{figure}
+Tέλος το \textbf{Meshroom} δοκιμάστηκε, αλλά απορρίφθηκε επειδή ο \textbf{χρόνος επεξεργασίας/render} ήταν σημαντικά μεγαλύτερος και το \textbf{τελικό mesh/texture} δεν ήταν τόσο καθαρό και έτοιμο προς χρήση όσο τα αποτελέσματα του \textbf{RealityScan}. Για τις ανάγκες του project (γρήγορος κύκλος δοκιμών) το RealityScan παρείχε ταχύτερη ροή και καταλληλότερα assets.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{log_meshroom_render.png}
+    \caption{log meshroom render}
+    \label{fig:placeholder}
+\end{figure}
+
+\section{Textures από smartphone \& Quixel / Materialize}
+Για όλα τα υλικά της σκηνής χρειαζόμουν \textbf{HDRP Mask Maps}, οπότε χρησιμοποίησα το εργαλείο \textbf{Unity HDRP Mask Map Packer (saltario)} για να πακετάρω σωστά τα κανάλια \(\rightarrow\) \(\mathrm{R{=}Metallic,\ G{=}AO,\ B{=}Detail\ Mask,\ A{=}Smoothness}\). 
+(\href{https://github.com/saltario/mask_maker}{https://github.com/saltario/mask_maker})
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Mask Maker.png}
+    \caption{Mask Maker}
+    \label{fig:placeholder}
+\end{figure}
+
+Αντί να φτιάχνω υφές με την «παραδοσιακή» ροή (Photoshop/ZBrush), τράβηξα \textbf{φωτογραφίες με smartphone} για \emph{albedo} και με το \textbf{Materialize} παρήγαγα αυτόματα \emph{Normal, Height, Roughness, Metallic, AO}. Έτσι συνέθεσα \textbf{εξ’ ολοκλήρου δικά μου PBR HDRP materials} (BaseMap + MaskMap + Normal + Height) με γρήγορο βηματισμό. 
+
+\begin{figure}[Η]
+    \centering
+    \includegraphics[width=1\linewidth]{Materials Pipeline.png}
+    \caption{Materials Pipeline}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{Δικά μου sample photos.png}
+    \caption{Live δείγματα φωτογραφιών}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{CEMENT.png}
+    \caption{CEMENT WALL}
+    \label{fig:placeholder}
+\end{figure}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{pbr 1.png}
+    \caption{pbr 1}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{pbr 2.png}
+    \caption{pbr 2}
+    \label{fig:placeholder}
+\end{figure}
+Δεν επέλεξα το \textbf{Quixel Mixer}, γιατί για το scope του project το \textbf{Materialize} ήταν \emph{πολύ ταχύτερο} και επαρκώς \emph{εύστοχο} στην παραγωγή των απαιτούμενων χαρτών.
+
+
+\section{Σύστημα νερού, ουρανού και καιρικά εφέ}
+\subsection*{Ρυθμίσεις (screenshots)}
+\textbf{WindControl (Book of the Dead).} Χρησιμοποίησα το έτοιμο \emph{WindControl} script για ομοιόμορφο \emph{sway} σε γρασίδια/θάμνους/δέντρα. Ρυθμίστηκαν: \emph{Global strength \& direction variance}, \emph{gusts} για σύντομες ριπές, \emph{grass flutter} για λεπτές δονήσεις στα blades και \emph{tree base strength} για πιο αργή ταλάντωση στους κορμούς. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Wind control.png}
+    \caption{Wind control}
+    \label{fig:placeholder}
+\end{figure}
+
+\textbf{Morning Sky Global Volume.} Ένα \emph{Global Volume} με \emph{Physically Based Sky}, \emph{Cloud Layer} και \emph{Volumetric Clouds} δίνει πρωινή ημισυννεφιά· \emph{Fog} για βάθος και \emph{White Balance} με ελαφρώς θερμό \emph{Temperature/Tint} ώστε να «δέσει» με το πράσινο της σκηνής.
+
+\textbf{HDRP Water (River).} Για το σώμα νερού χρησιμοποίησα \emph{Water Surface = River} με \emph{Instanced Quads} και \emph{Tessellation} ενεργό. Το \emph{Agitation} (μακρινός άνεμος/χαοτικότητα) και τα \emph{Ripples} (τοπικός άνεμος) ρυθμίστηκαν ώστε να ταιριάζουν με το \emph{WindControl}. Ενεργοποιήθηκαν \emph{Refraction} και ήπιο \emph{Smoothness} για φυσικό look χωρίς υπερβολικά specular.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{water.png}
+    \caption{water}
+    \label{fig:placeholder}
+\end{figure}
+
+
+
+
+
+\section{Απόδοση (Forest) -Display Stats}
+
+\subsection*{Μετρήσεις (Good/Bad ανά preset)}
+Για κάθε preset κατέγραψα δύο στιγμιότυπα στη διαδρομή της κάμερας: \textbf{Good} (υψηλότερη απόδοση) και \textbf{Bad} (χαμηλότερη απόδοση).
+Οι τιμές είναι \emph{Avg} από το HDRP Display Stats.
+
+\begin{table}[H]
+  \noindent
+  \makebox[0pt][l]{% pin the content to the left edge
+    \begin{tabular}{@{}l l r r r r r r@{}}
+      \textbf{Preset} & \textbf{Δείγμα} & \textbf{FPS} & \textbf{FT (ms)} & \textbf{GPU (ms)} & \textbf{CPU Main} & \textbf{CPU Render} & \textbf{CPU Present} \\
+      \hline
+      Performant & Good & \textbf{102.7} & \textbf{9.85} & \textbf{7.81} & 5.22 & 5.08 & 0.37 \\
+                 & Bad  & 21.1 & 52.60 & 40.18 & 17.37 & 7.14 & 21.85 \\
+      Balanced   & Good & \textbf{93.6} & \textbf{10.74} & \textbf{8.81} & 6.26 & 5.60 & 0.37 \\
+                 & Bad  & 20.5 & 50.42 & 42.36 & 18.13 & 9.68 & 24.32 \\
+      High       & Good & \textbf{84.4} & \textbf{11.96} & \textbf{11.05} & 6.29 & 6.15 & 1.35 \\
+                 & Bad  & 21.5 & 51.16 & 41.08 & 20.05 & 9.00 & 20.94 \\
+    \end{tabular}%
+  }
+\end{table}
+
+\subsection*{Ερμηνεία}
+\begin{itemize}
+  \item \textbf{Μεταβλητότητα:} 
+  Performant: \(\sim\)21–103 FPS (×\(\sim\)4.9), 
+  Balanced: \(\sim\)20–94 FPS (×\(\sim\)4.6),
+  High: \(\sim\)22–84 FPS (×\(\sim\)3.9).
+  \item \textbf{GPU-bound στα “Bad”:} Το \emph{GPU Frame} φτάνει \(\sim\)40–42\,ms και το \emph{CPU Present Wait} \(\sim\)21–24\,ms — η CPU περιμένει τη GPU.
+  \item \textbf{Τι βαραίνει:} Πυκνό \emph{foliage/grass} κοντά στην κάμερα (overdraw \& instancing), \emph{HDRP Water} (refraction/tessellation) όταν καταλαμβάνει μεγάλο μέρος του κάδρου, και \emph{Volumetric Fog/Clouds}.
+  \item \textbf{Good frames:} \emph{GPU Frame} 7–11\,ms, σχεδόν μηδενικό \emph{Present Wait}· κάδρα με λιγότερο οπτικό φορτίο (λιγότερα blades στο προσκήνιο, μικρότερη συμβολή νερού/volumetrics).
+\end{itemize}
+
+\subsection*{Σύνοψη}
+Η σκηνή \textbf{Forest} μπορεί να τρέξει πολύ γρήγορα στα «καλά» τμήματα (84–103 FPS), αλλά στα «βαριά» σημεία πέφτει κοντά στα \(\sim\)20–22 FPS λόγω \textbf{GPU} κορεσμού από \emph{foliage overdraw}, \emph{νερό} και \emph{volumetrics}. Για σταθερό frametime, τα πιο αποτελεσματικά «κουμπιά» είναι: μείωση \emph{vegetation density/culling distance}, πιο «ήπιο» \emph{water} (μικρότερη tessellation/refraction range) και ρύθμιση \emph{volumetric} παραμέτρων (step count/height).
+
+
+%---------------- ΚΕΦΑΛΑΙΟ 6 ----------------------------
+\chapter{Σχεδιασμός Διεπαφής Χρήστη και Εμπειρία Παίκτη (UI/UX/HCI)}
+\section{Βασικές αρχές σχεδιασμού UI/UX σε παιχνίδια}
+Η έννοια του \textbf{User Interface (UI)} και του \textbf{User Experience (UX)} αποτελεί κεντρικό άξονα στο σύγχρονο \textit{game design}. Το UI αφορά τον τρόπο με τον οποίο ο παίκτης αλληλεπιδρά με το παιχνίδι μέσω οπτικών και λειτουργικών στοιχείων, ενώ το UX αναφέρεται στη συνολική εμπειρία που αποκομίζει ο παίκτης από αυτή την αλληλεπίδραση. Η σχέση των δύο εννοιών είναι στενά συνδεδεμένη με το πεδίο της \textbf{Αλληλεπίδρασης Ανθρώπου–Υπολογιστή (Human–Computer Interaction, HCI)}, το οποίο εξετάζει πώς ο σχεδιασμός των διεπαφών επηρεάζει την αποτελεσματικότητα, την εργονομία και τη συναισθηματική ανταπόκριση του χρήστη.
+
+\subsection*{Κύριες αρχές σχεδιασμού UI/UX}
+Ο σχεδιασμός διεπαφών στα παιχνίδια οφείλει να ακολουθεί ορισμένες θεμελιώδεις αρχές:
+
+\begin{itemize}
+  \item \textbf{Ορατότητα και καθαρότητα πληροφορίας (clarity \& legibility):} Ο παίκτης πρέπει να μπορεί να εντοπίζει και να κατανοεί άμεσα τα στοιχεία της διεπαφής, χωρίς περιττό οπτικό θόρυβο.
+  \item \textbf{Συνοχή και συνέπεια (consistency):} Η διεπαφή πρέπει να διατηρεί ομοιομορφία ως προς το χρώμα, τη γραμματοσειρά και τη θέση των στοιχείων, ώστε να ενισχύει τη μάθηση και τη σταθερότητα της εμπειρίας.
+  \item \textbf{Ελάχιστη γνωστική επιβάρυνση (cognitive load):} Ο παίκτης δεν πρέπει να υπερφορτώνεται με πληροφορίες· η διεπαφή οφείλει να παρέχει μόνο ό,τι είναι απολύτως αναγκαίο.
+  \item \textbf{Άμεση ανατροφοδότηση (feedback):} Κάθε ενέργεια του παίκτη πρέπει να συνοδεύεται από κάποια μορφή οπτικής, ακουστικής ή απτικής απόκρισης.
+  \item \textbf{Προσαρμοστικότητα και προσβασιμότητα (adaptivity, accessibility):} Οι διεπαφές πρέπει να προσαρμόζονται σε διαφορετικές συσκευές, προτιμήσεις και ανάγκες χρηστών, λαμβάνοντας υπόψη αρχές προσβασιμότητας. (\textbf{Norman, D. A. (2013),} \textit{The design of everyday things (Revised and expanded edition),\textbf{Nielsen, J. (1994).} \textit{Usability engineering.} } )
+\end{itemize}
+
+\subsection*{Μορφές διεπαφών (UI Types)}
+Στο πλαίσιο της ανάλυσης των διεπαφών σε παιχνίδια, γίνεται συχνή διάκριση ανάμεσα σε τέσσερις βασικές μορφές UI:
+
+\begin{itemize}
+  \item \textbf{Diegetic UI:} Τα στοιχεία εμφανίζονται μέσα στον κόσμο του παιχνιδιού και αναγνωρίζονται από τον χαρακτήρα. Παραδείγματα αποτελούν τα όργανα μέτρησης, οι φακοί, τα όπλα ή οι χάρτες που ο παίκτης χρησιμοποιεί άμεσα μέσα στο περιβάλλον.
+  \item \textbf{Non-Diegetic UI:} Τα στοιχεία εμφανίζονται εκτός του κόσμου του παιχνιδιού, όπως το HUD, οι μπάρες ζωής ή οι μίνι χάρτες.
+  \item \textbf{Spatial UI:} Στοιχεία που τοποθετούνται στο χώρο του παιχνιδιού, αλλά δεν είναι ορατά ή αντιληπτά από τον χαρακτήρα — π.χ. δείκτες στόχευσης ή ενδείξεις θέσης αντικειμένων.
+  \item \textbf{Meta UI:} Οπτικά εφέ που αποδίδουν συναισθηματική ή φυσική κατάσταση του χαρακτήρα, όπως η θόλωση οθόνης όταν τραυματίζεται, οι σταγόνες αίματος ή οι κινηματογραφικές παραμορφώσεις. (\href{https://medium.com/@lorenzoardeni/types-of-ui-in-gaming-diegetic-non-diegetic-spatial-and-meta-5024ce6362d0}{https://medium.com/@lorenzoardeni/types-of-ui-in-gaming-diegetic-non-diegetic-spatial-and-meta-5024ce6362d0})
+\end{itemize}
+
+
+Ένα χαρακτηριστικό παράδειγμα \textbf{diegetic UI} συναντάται στο \textit{Metro Exodus}, όπου όλες οι πληροφορίες παρουσιάζονται μέσα από αντικείμενα του ίδιου του κόσμου του παιχνιδιού, όπως ο χάρτης και το ρολόι που κρατά ο χαρακτήρας. Ο παίκτης λαμβάνει τα δεδομένα αυτά απευθείας μέσω της προοπτικής του πρωταγωνιστή, χωρίς την ύπαρξη παραδοσιακού HUD.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{metro exodus map.jpg}
+    \caption{metro exodus map}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{metro exodus watch for oxygen.jpg}
+    \caption{metro exodus watch for oxygen}
+    \label{fig:placeholder}
+\end{figure}
+
+\section{Υλοποίηση διεπαφών (HUD, menus, diegetic UI)}
+
+Η υλοποίηση του UI ακολουθεί διάκριση ανάμεσα σε \textit{non-diegetic} στοιχεία (κεντρικό μενού, ρυθμίσεις, υπότιτλοι) και \textit{diegetic/spatial} στοιχεία που ανήκουν στον κόσμο του παιχνιδιού (πόρτες/έξοδοι, χωρικές ενδείξεις/μνήμες). Ο σχεδιασμός στοχεύει σε \emph{σαφήνεια}, \emph{συνέπεια}, \emφ{ελάχιστη γνωστική επιβάρυνση} και \emph{άμεση ανατροφοδότηση} .
+
+\subsection{Κεντρικό μενού και ρυθμίσεις (non-diegetic UI)}
+Το \textbf{Κεντρικό Μενού} προσφέρει \textit{Start/Continue/Settings/Quit} και χειρίζεται κατάσταση αποθήκευσης για το κουμπί \textit{Continue} μέσω \texttt{SaveSystem.HasSave()}, ενώ οι μεταβάσεις σε σκηνές δρομολογούνται από \texttt{MainMenuUI} και προαιρετικό οπτικό υπόβαθρο βίντεο μέσω \texttt{MenuBackgroundController} με fade. 
+
+Οι \textbf{Ρυθμίσεις} υλοποιούνται με \texttt{SettingsMenuUI}: επιλογή ποιότητας (\texttt{QualitySettings}), χειρισμός πλήρους οθόνης/\textit{VSync} και sliders για \textit{Master, Music, SFX, UI, Voice}, με άμεση εφαρμογή στον \texttt{AudioManager} και επιμονή τιμών σε \texttt{PlayerPrefs}. 
+
+\subsection{Σύστημα ήχου και υπότιτλων (feedback \& καθαρότητα)}
+Το ακουστικό/λεκτικό feedback οργανώνεται αρθρωτά:
+\begin{itemize}
+  \item \textbf{AudioManager}: διπλή μουσική πηγή για crossfade, pool για SFX, δρομολόγηση σε \texttt{AudioMixerGroups} (Master/Music/SFX/UI/Voice), με συγχρονισμό του \textit{listener} στον παίκτη/κάμερα.
+  \item \textbf{VoiceLine \& VoiceLinePlayer}: φωνητικές ατάκες ορίζονται ως \texttt{ScriptableObjects} και αναπαράγονται με ουρά, \textit{ducking} μουσικής (snapshots) και εκπομπή γεγονότων για υπότιτλους. 
+  \item \textbf{SubtitlesUI}: εγγραφή στο event υποτίτλων και εμφάνιση μέσω \texttt{CanvasGroup} (fade-in/out) για ευανάγνωστο non-diegetic.
+  \item \textbf{Υποβοηθητικά}: \texttt{EnsureAudio} για εγγυημένη παρουσία συστήματος ήχου, \texttt{PlayMusicOnStart} για εισαγωγική μουσική, \texttt{EndSceneVoiceOnStart} για τελική ατάκα/σίγαση μουσικής. 
+\end{itemize}
+
+
+\subsection{Diegetic \& spatial διεπαφές μέσα στον κόσμο}
+Η εμπειρία δίνει προτεραιότητα σε \textbf{diegetic} και \textbf{spatial} ενδείξεις, με ελάχιστο μόνιμο HUD:
+\begin{itemize}
+  \item \textbf{Πόρτες/Έξοδοι (diegetic interaction):} \texttt{DoorInteract} και \texttt{DoorToCorridorSimple} χειρίζονται triggers για έξοδο από \emph{Corridor} προς \emph{STREET/FOREST} και επιστροφή σε διαφορετικά \emph{Corridor Passes} αντίστοιχα. Η μετάβαση γίνεται μέσω GameFlowManager.
+  \item \textbf{Χωρικά prompts \& μνήμες (spatial UI):} 
+  \begin{enumerate}
+    \item \texttt{FadeOutWhenNear}: σταδιακή εξασθένηση (άλφα) σε renderers με βάση απόσταση κάμερας–αντικειμένου (HDRP/URP \texttt{\_BaseColor} ή legacy \texttt{\_Color}), αποφεύγοντας σύγκρουση με LOD crossfade.
+    \item \texttt{HideSpatialUIOnTrigger}: απόκρυψη/καταστροφή root στοιχείου spatial UI όταν ο παίκτης διασχίζει trigger, με προαιρετικό delay και \texttt{UnityEvent} για αλυσιδωτές ενέργειες.
+  \end{enumerate}
+  \item \textbf{Spawn/τοποθέτηση παίκτη:} \texttt{SceneSpawnPlacer} σε σύζευξη με \texttt{SpawnPoint} \& \texttt{PlayerSpawnAnchor} επιλέγει κατάλληλο \texttt{spawnId} (από loader ή override), τοποθετεί τον παίκτη και ενημερώνει το \texttt{SaveSystem}. 
+  \item \textbf{Diegetic tutorial graffiti (Corridor):} Τοποθετείται τοιχογραφία--graffiti με οδηγία ``\textit{TO OPEN PRESS ``E''}'' , ώστε η υπόδειξη να ανήκει στον κόσμο του παιχνιδιού (χωρίς HUD).
+Η αλληλεπίδραση πόρτας υλοποιείται μέσω {\ttfamily DoorInteract/\allowbreak DoorToCorridorSimple}, ενώ μετά την πρώτη επιτυχή χρήση η ένδειξη αποσύρεται αυτόματα με σταδιακή εξασθένηση (\texttt{FadeOutWhenNear}) ή πλήρη απόκρυψη μέσω trigger (\texttt{HideSpatialUIOnTrigger}). 
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Spatial far.png}
+    \caption{Spatial far}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{diegetic ui.png}
+    \caption{diegetic ui}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{hud.png}
+    \caption{hud}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{loading screen.png}
+    \caption{loading screen}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Main menu.png}
+    \caption{Main menu}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Settings.png}
+    \caption{Settings}
+    \label{fig:placeholder}
+\end{figure}
+\subsection{Ροή φόρτωσης και αποθήκευσης}
+Οι σκηνικές μεταβάσεις γίνονται μέσω \texttt{GameFlowManager}, ο οποίος δημιουργεί \textit{LoadRequest} (στόχος σκηνής, spawn id, ελάχιστος χρόνος φόρτωσης) και μεταφέρει στη σκηνή \texttt{Loading}. Εκεί, ο \texttt{LoadingController} εκτελεί ασύγχρονη φόρτωση με προαιρετική μπάρα/ποσοστό, ικανοποιώντας ταυτόχρονα πρόοδο (\(\geq 90\%\)) και ελάχιστο χρόνο πριν την ενεργοποίηση. Τα σημεία επανεμφάνισης επιμένουν μέσω \texttt{SaveSystem} (\texttt{savegame.json}) πάνω σε \texttt{SaveData}, επιτρέποντας στο \textit{Continue} να επαναφέρει τον παίκτη στο κατάλληλο \texttt{spawnId}. Προαιρετικά, κλειδώνεται προσωρινά η είσοδος με \texttt{PlayerInputGuard} κατά τις μεταβάσεις. 
+
+\subsection{Μεταβάσεις, triggers και autosave}
+Για ομαλές αλληλουχίες σκηνών χρησιμοποιείται \texttt{SceneTransitionManager} με \textit{fade} (\texttt{CanvasGroup}), \texttt{TransitionChain} (προσθετική φόρτωση, επιλογή τελικού \texttt{spawnId}, unload παλιών σκηνών) και προαιρετικό κλείδωμα εισόδου. 
+Οι \textit{voice} ατάκες ενεργοποιούνται \textit{in-world} μέσω \texttt{VoiceLineTrigger} (collider-based, one-shot/delay) και αποδίδονται non-diegetic με υπότιτλους.
+Για τυπική επιμονή προόδου, το \texttt{SceneAutosaveOnLoad} αποθηκεύει \texttt{sceneName/spawnId} στην είσοδο κάθε σκηνής. Επιπλέον, ειδικά triggers (π.χ.\ \texttt{AmaliaMonologueTrigger}) συγχρονίζουν facial animation layer με την αφήγηση όπου απαιτείται. 
+
+\subsection{Σύνοψη αντιστοίχισης στοιχείων σε κατηγορίες UI}
+\begin{table}[h]
+\centering
+\begin{tabular}{p{0.28\linewidth} p{0.65\linewidth}}
+\toprule
+\textbf{Κατηγορία UI} & \textbf{Στοιχεία/Υλοποίηση} \\
+\midrule
+Non-diegetic & Κεντρικό μενού/ρυθμίσεις (\texttt{MainMenuUI}, \texttt{SettingsMenuUI}); υπότιτλοι (\texttt{SubtitlesUI}); βοηθητικά μηνύματα.  \\
+Diegetic & Πόρτες/έξοδοι (\texttt{DoorInteract}, \texttt{DoorToCorridorSimple}); diegetic tutorial graffiti.  \\
+Spatial & Οδηγοί/ενδείξεις (\texttt{FadeOutWhenNear}, \texttt{HideSpatialUIOnTrigger}); rays/στήλες φωτός για «μνήμες».  \\
+Meta & Ήπια οπτικά εφέ έντασης/διάθεσης (περιορισμένα για να μην καλύπτουν το περιβάλλον). \\
+\bottomrule
+\end{tabular}
+\caption{Αντιστοίχιση υλοποιημένων στοιχείων στις τέσσερις μορφές UI.}
+\end{table}
+
+
+\subsection{Σχόλια εργονομίας}
+Η στρατηγική «\textit{diegetic-first, HUD-light}» μειώνει οπτική συμφόρηση και ενισχύει την εμβύθιση: τα non-diegetic στοιχεία παραμένουν \emph{διακριτά και προσβάσιμα} (ρυθμίσεις, υπότιτλοι), ενώ τα spatial cues εμφανίζονται προσωρινά και αποσύρονται όταν ολοκληρώσουν τον σκοπό τους. Η δρομολόγηση ήχου με \textit{ducking} διατηρεί \emph{καθαρότητα λόγου} και συνεπή ανατροφοδότηση, κρίσιμη για κατανόηση αφήγησης.
+
+\section{Ερωτηματολόγιο αξιολόγησης UI/UX και ανάλυση αποτελεσμάτων}
+\subsection{Στόχος και δείγμα}
+Στόχος του ερωτηματολογίου ήταν η αποτίμηση της σαφήνειας, εργονομίας και εμβύθισης του σχεδιασμού UI/UX, με έμφαση στη σύγκριση \textit{diegetic}, \textit{non-diegetic}, \textit{spatial} και \textit{meta} στοιχείων. Συγκεντρώθηκαν συνολικά \textbf{57} συμμετοχές. Η συλλογή πραγματοποιήθηκε διαδικτυακά, ανώνυμα, και η ανάλυση έγινε με χρήση JASP.
+
+\subsection{Δομή ερωτηματολογίου}
+Το ερωτηματολόγιο οργανώθηκε σε τέσσερις ενότητες: (α) δημογραφικά/προφίλ, (β) εμπειρία και στάσεις για UI/HUD, (γ) προτιμήσεις συστήματος πλοήγησης, (δ) προτίμηση μορφής tutorial. Οι περισσότερες ερωτήσεις χρησιμοποιούν κλίμακα Likert \(1\!-\!5\) (1=\textit{διαφωνώ απόλυτα}, 5=\textit{συμφωνώ απόλυτα}), εκτός από τις πολυεπιλογές όπου δηλώνεται ρητά.
+
+\subsection{Ερωτήσεις}
+\subsection*{Δημογραφικά (Q1–Q5)}
+\begin{enumerate}
+  \item \textbf{Ηλικία}
+  \item \textbf{Φύλο}
+  \item \textbf{Συχνότητα ενασχόλησης με βιντεοπαιχνίδια}
+  \item \textbf{Πλατφόρμες που χρησιμοποιείτε κυρίως για παιχνίδια}
+  \item \textbf{Ποια είναι τα τρία (3) είδη βιντεοπαιχνιδιών που παίζετε πιο συχνά;} (έως 3 επιλογές)
+\end{enumerate}
+
+\subsection*{Εμπειρία \& Αντιλήψεις για UI/HUD (Q6–Q13)}
+\begin{enumerate}\setcounter{enumi}{5}
+  \item \textbf{Έχετε παίξει ποτέ Walking Simulator;} (π.\,χ.\ Dear Esther, What Remains of Edith Finch, Firewatch)
+  \item \textbf{Στην πορεία του χρόνου, πώς αντιλαμβάνεστε τις αλλαγές στο UI/HUD των παιχνιδιών που παίζετε;}
+  \item \textbf{Έχετε παρατηρήσει μια τάση μινιμαλισμού στο HUD/UI των παιχνιδιών που παίζετε;}
+  \item \textbf{Από την εμπειρία σας, έχετε παρατηρήσει μια γενικότερη τάση απλοποίησης/μείωσης (μινιμαλισμού) ή εμπλούτισης/αύξησης (μαξιμαλισμού) του HUD/UI στα παιχνίδια που παίζετε;}
+  \item \textbf{Σε ποιο βαθμό θεωρείτε ότι η μείωση των οπτικών πληροφοριών (UI/HUD) επηρεάζει θετικά ή αρνητικά την εμβύθιση (immersion) του παίκτη;}
+  \item \textbf{Θεωρείτε ότι ένα πιο «καθαρό» UI βελτιώνει την αφήγηση και την ατμόσφαιρα του παιχνιδιού;}
+  \item \textbf{Πόσο σημαντική θεωρείτε τη συνοχή του UI με το περιβάλλον και τη θεματική του παιχνιδιού;} (π.\,χ.\ diegetic στοιχεία μέσα στον κόσμο)
+  \item \textbf{Ποιο από τα παρακάτω στοιχεία του UI θεωρείτε πιο καθοριστικό για την εμπειρία σας;}
+\end{enumerate}
+
+\subsection*{Συστήματα Πλοήγησης \& Προτιμήσεις (Q14–Q15)}
+\begin{enumerate}\setcounter{enumi}{13}
+  \item \textbf{Από τα παρακάτω παραδείγματα συστημάτων πλοήγησης/εύρεσης στόχων, ποιο προτιμάτε περισσότερο;}\\
+  (Δείτε τις εικόνες 1–4 και επιλέξτε αυτό που σας ταιριάζει καλύτερα)
+  \begin{enumerate}
+    \item \textit{Diegetic UI:} Πυξίδα στο χέρι του χαρακτήρα που δείχνει τις τοποθεσίες.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Component 1.png}
+    \caption{1}
+    \label{fig:placeholder}
+\end{figure}
+
+    \item \textit{Spatial UI:} Βέλη/σήμανση στον τρισδιάστατο χώρο που δείχνουν κατευθύνσεις/τοποθεσίες.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Component 2.png}
+    \caption{ 2}
+    \label{fig:placeholder}
+\end{figure}
+    \item \textit{Non-diegetic UI:} Μικρός χάρτης/πυξίδα στην οθόνη με σημάδια για τους στόχους.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Component 4.png}
+    \caption{3}
+    \label{fig:placeholder}
+\end{figure}
+    \item \textit{Μινιμαλιστικό UI:} Χωρίς βοηθήματα — ελεύθερη εξερεύνηση με καθαρό οπτικό πεδίο.
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Component 3.png}
+    \caption{4}
+    \label{fig:placeholder}
+\end{figure}
+
+  \end{enumerate}
+  \item \textbf{Στα exploration games, θεωρείτε ότι η ελαχιστοποίηση του UI προσφέρει την πιο ιδανική, καθαρή και καθηλωτική εμπειρία, ή προτιμάτε την ύπαρξη επιπρόσθετων πληροφοριών για πιο ομαλή και καθοδηγούμενη εμπειρία;}
+\end{enumerate}
+
+\subsection*{Tutorials \& Καθοδήγηση Χρήστη (Q16)}
+\begin{enumerate}\setcounter{enumi}{15}
+  \item \textbf{Ποια μορφή tutorial (εκπαιδευτικού) UI από τις παρακάτω θα προτιμούσατε για να σας καθοδηγήσει σε μια βασική ενέργεια (π.\,χ.\ το άνοιγμα μιας πόρτας);}
+  \begin{enumerate}
+    \item \textit{Non-diegetic UI:} Παραδοσιακό popup στην οθόνη.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{component 5.png}
+    \caption{1}
+    \label{fig:placeholder}
+\end{figure}
+    \item \textit{Spatial UI:} Γράμματα/σήμανση που αιωρούνται στον χώρο.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Component 6.png}
+    \caption{2}
+    \label{fig:placeholder}
+\end{figure}
+    \item \textit{Diegetic UI:} Οδηγία ενσωματωμένη στο περιβάλλον (π.\,χ.\ graffiti στον τοίχο δίπλα στην πόρτα).
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Component 7.png}
+    \caption{3}
+    \label{fig:placeholder}
+\end{figure}
+  \end{enumerate}
+\end{enumerate}
+
+
+\subsection{Υλοποίηση κλίμακας και κωδικοποίησης}
+Οι ερωτήσεις τύπου Likert κωδικοποιήθηκαν ως \(1\!-\!5\) (\(1=\)διαφωνώ απόλυτα, \(5=\)συμφωνώ απόλυτα). Οι πολυεπιλογές (π.χ. Q5) καταγράφηκαν ως δυαδικά dummies ανά επιλογή, ενώ οι μονο-επιλογές (Q14, Q16) ως κατηγορικές μεταβλητές με τις υποκατηγορίες \(\{a,b,c,\ldots\}\).
+
+\subsection{Ανάλυση (JASP) — περίληψη}
+Η ανάλυση περιελάμβανε περιγραφικά στατιστικά (Μ, SD, ποσοστά), οπτικοποιήσεις (boxplots/ραβδογράμματα) και διερευνητικές συσχετίσεις μεταξύ προτιμήσεων UI και δεικτών εμπειρίας (π.χ.\ μινιμαλισμός–εμβύθιση). Τα αναλυτικά γραφήματα και πίνακες παρουσιάζονται στο Παράρτημα.
+
+
+\begin{table}[H]
+\centering
+\begin{tabular}{p{0.25\linewidth} p{0.68\linewidth}}
+\toprule
+\textbf{Ενότητα} & \textbf{Ερωτήσεις} \\
+\midrule
+Δημογραφικά/Προφίλ & Q1--Q5 \\
+Στάσεις για UI/HUD & Q6--Q13 \\
+Σύστημα πλοήγησης & Q14 (a--d) \\
+Μινιμαλισμός σε exploration & Q15 \\
+Μορφή tutorial & Q16 (a--c) \\
+\bottomrule
+\end{tabular}
+\caption{Χαρτογράφηση ενοτήτων και ερωτήσεων του ερωτηματολογίου.}
+\label{tab:survey_map}
+\end{table}
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{q12-14.png}
+    \caption{q12-14}
+    \label{fig:placeholder}
+\end{figure}
+
+
+Περίπου~το~70\%~όσων~απάντησαν~θετικά~στην~Q12~προτίμησαν~τις~επιλογές~1~και~2~στην~Q14,~δηλαδή~τα~\textit{diegetic}~και~\textit{spatial}~συστήματα~διεπαφής,~επαληθεύοντας~τις~σχεδιαστικές~επιλογές~που~υιοθετήθηκαν~στα~mockups~του~προτεινόμενου~UI.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{q12-16.png}
+    \caption{q12-16}
+    \label{fig:placeholder}
+\end{figure}
+Στο Q16 (μορφή tutorial UI) παρατηρείται σαφής διαφοροποίηση: όσοι απάντησαν \textbf{θετικά} στη Q12 προτίμησαν κυρίως την \textbf{επιλογή 3} (\~58.6\%), ενώ όσοι ήταν \textbf{αρνητικοί} στη Q12 κλίνουν προς την \textbf{επιλογή 2} (\~50\%). Συνολικά επικρατεί η \textbf{επιλογή 3} (\~45.6\%), έπεται η \textbf{2} (\~31.6\%) και τελευταία η \textbf{1} (\~22.8\%). Η συσχέτιση είναι στατιστικά σημαντική (χ²=8.70, df=2, p=0.013) με μεσαίο μέγεθος επίδρασης (Cramer's V≈0.39), υποδηλώνοντας ότι η στάση στην Q12 επηρεάζει ουσιαστικά τον τύπο tutorial που προτιμάται. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{platform-14.png}
+    \caption{platform-14}
+    \label{fig:placeholder}
+\end{figure}
+
+Σημαντική συσχέτιση πλατφόρμας–προτίμησης (χ²=19.09, df=9, p=0.024, Cramer’s V=0.33). Οι χρήστες \textbf{κινητού/Tablet} προτιμούν καθαρά την \textbf{επιλογή 2} (≈49\%, έπειτα 3 με ≈30\%), οι \textbf{PC} μοιράζονται κυρίως μεταξύ \textbf{1} (≈43\%) και \textbf{2} (≈29\%) με μικρό ενδιαφέρον για \textbf{4} (≈21\%), ενώ οι \textbf{κονσόλες} επιλέγουν αποκλειστικά την \textbf{1} (n=2). Συνολικά επικρατεί η \textbf{επιλογή 2} (≈38.6\%), ακολουθούμενη από \textbf{1} (≈29.8\%), \textbf{3} (≈22.8\%) και τελευταία η \textbf{4} (≈8.8\%), δείχνοντας ότι η πλατφόρμα χρήσης επηρεάζει ουσιαστικά το προτιμώμενο σύστημα πλοήγησης/εύρεσης στόχων. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{age-14.png}
+    \caption{age-14}
+    \label{fig:placeholder}
+\end{figure}
+Δεν προκύπτει στατιστικά σημαντική συσχέτιση ηλικίας–προτίμησης στο Q14 (χ²=16.25, df=12, p=0.180, Cramer’s V≈0.31). Ωστόσο, περιγραφικά διακρίνονται τάσεις: οι \textbf{45+} προτιμούν έντονα την \textbf{επιλογή 2} (\~69\%), οι \textbf{35–44} γέρνουν προς την \textbf{1} (50\%), οι \textbf{18–24} μοιράζονται κυρίως μεταξύ \textbf{1} (\~37\%) και \textbf{2} (\~33\%), ενώ οι μικρότεροι \textbf{<18} κατανέμονται σχετικά ισομερώς (2≈3≈33\%). Συνολικά, επικρατεί η \textbf{επιλογή 2} (\~38.6\%), έπειτα η \textbf{1} (\~29.8\%), η \textbf{3} (\~22.8\%) και τελευταία η \textbf{4} (\~8.8\%). 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{age-15.png}
+    \caption{age-15}
+    \label{fig:placeholder}
+\end{figure}
+
+Δεν εντοπίζεται στατιστικά σημαντική σχέση ηλικίας–Q15 (χ²=1.12, df=4, p=0.891, Cramer’s V=0.14, μικρό). Περιγραφικά όμως, η πλειονότητα όλων των ομάδων κλίνει προς \textbf{πληρέστερο/ενημερωτικό UI}: συνολικά \textbf{61.4\%} υπέρ ενημερωτικού vs \textbf{38.6\%} υπέρ μινιμαλιστικού. Οι \textbf{18–24} και \textbf{25–34} προτιμούν ενημερωτικό (\~66.7\%), οι \textbf{35–44} μοιράζονται 50/50, οι \textbf{45+} \~61.5\% ενημερωτικό, ενώ οι \textbf{<18} 50/50. Συμπέρασμα: η προτίμηση για ενημερωτικό UI είναι γενικευμένη και \textbf{δεν διαφοροποιείται ουσιαστικά από την ηλικία}. 
+Οι συμμετέχοντες που αντιλαμβάνονται πιο “ρεαλιστικά” ή “immersive” τα σύγχρονα exploration games, φαίνεται να προτιμούν \textbf{UI στοιχεία ενσωματωμένα στον κόσμο του παιχνιδιού} (diegetic ή spatial), σε σχέση με πιο “παραδοσιακά” HUD ή overlay interfaces. 
+
+%---------------- ΚΕΦΑΛΑΙΟ 7 ----------------------------
+\chapter{Ψηφιακοί Χαρακτήρες και Animation Pipeline}
+\section{Δημιουργία προσώπου}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Character creation Pipeline.png}
+    \caption{Character Creation Pipeline}
+    \label{fig:placeholder}
+\end{figure}
+
+\subsection{Πειραματική προσπάθεια μέσω φωτογραμμετρίας}
+
+Στο πρώτο στάδιο της διαδικασίας επιχειρήθηκε η δημιουργία του κεφαλιού του χαρακτήρα μέσω φωτογραμμετρίας, 
+με σκοπό την παραγωγή ενός ρεαλιστικού τρισδιάστατου μοντέλου βασισμένου σε πραγματικά δεδομένα. 
+Για τον σκοπό αυτό, πραγματοποιήθηκε φωτογράφιση μίας συμφοιτήτριας σε ελεγχόμενο σκηνικό, 
+με ομοιόμορφο φωτισμό και σταθερές ρυθμίσεις κάμερας, χρησιμοποιώντας φωτογραφική μηχανή 
+\textit{Canon DSLR}. Συλλέχθηκαν περίπου 650 φωτογραφίες, οι οποίες εισήχθησαν στο λογισμικό 
+\textit{RealityScan} για την ανακατασκευή του μοντέλου.
+
+Παρά τη σωστή διαδικασία λήψης, τα αποτελέσματα δεν κρίθηκαν ικανοποιητικά, 
+καθώς το λογισμικό αδυνατούσε να παραγάγει πλήρες και καθαρό \textit{mesh} 
+για ολόκληρη την επιφάνεια του κεφαλιού. 
+Η φωτογραμμετρική προσέγγιση εγκαταλείφθηκε συνεπώς, 
+και αποφασίστηκε η μετάβαση σε εναλλακτική μεθοδολογία μοντελοποίησης.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{realityscan failed head.png}
+    \caption{realityscan failed head}
+    \label{fig:placeholder}
+\end{figure}
+
+Ως εναλλακτική λύση, χρησιμοποιήθηκε το εργαλείο \textit{Face Transfer} του λογισμικού 
+\textit{Daz Studio}. Με τη χρήση μίας φωτογραφίας του αρχικού μοντέλου, 
+το σύστημα δημιούργησε έναν τρισδιάστατο χαρακτήρα τύπου \textit{Genesis~9}, 
+προσαρμόζοντας αυτόματα τα χαρακτηριστικά του προσώπου ώστε να προσεγγίζουν 
+με ακρίβεια εκείνα του ατόμου στη φωτογραφία. 
+Η διαδικασία αυτή παρείχε μία ικανοποιητική βάση για περαιτέρω επεξεργασία 
+και ρετουσάρισμα του μοντέλου εντός του \textit{Blender}, 
+όπου πραγματοποιήθηκαν βελτιώσεις στη γεωμετρία και την τοπολογία.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{daz face transfer.png}
+    \caption{daz face transfer}
+    \label{fig:placeholder}
+\end{figure}
+Για τη σωστή μεταφορά του χαρακτήρα από το \textit{Daz Studio} στο \textit{Blender}, 
+χρησιμοποιήθηκε το πρόσθετο \textit{Diffeomorphic: Daz Importer}. 
+Το εργαλείο αυτό επιτρέπει την ακριβή μετατροπή των δεδομένων του μοντέλου 
+(\textit{mesh}, \textit{rig}, \textit{morphs} και \textit{materials}) σε μορφή 
+συμβατή με το περιβάλλον του Blender, διατηρώντας τις σωστές κλίμακες, 
+τους χάρτες υλικών και τη δομή των αρθρώσεων για επόμενη διαδικασία 
+\textit{retargeting} και επεξεργασίας. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Genesis9Human_BlenderExport.png}
+    \caption{Genesis9Human_BlenderExport}
+    \label{fig:placeholder}
+\end{figure}
+\section{Ριγκάρισμα και σωματικό animation}
+Για την προετοιμασία του χαρακτήρα προς animation, απαιτήθηκε η δημιουργία και ενοποίηση του 
+σκελετού (\textit{rig}) σώματος. Αρχικά, αξιοποιήθηκε το εργαλείο \textit{Rig~GNS} 
+εντός του \textit{Blender}, το οποίο επιτρέπει την αυτόματη ευθυγράμμιση και προσαρμογή 
+των αρθρώσεων ενός εισαγόμενου μοντέλου στις προδιαγραφές του \textit{Humanoid rig} 
+της \textit{Unity}. Μέσω αυτής της διαδικασίας επιτεύχθηκε η ομαλή μετάβαση 
+από το σύστημα οστών του \textit{Genesis~9} σε μορφή συμβατή με τη μηχανή παιχνιδιών, 
+εξασφαλίζοντας παράλληλα σωστό \textit{weight painting} και φυσική κίνηση των άκρων.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{rigGNS.png}
+    \caption{rigGNS}
+    \label{fig:placeholder}
+\end{figure}
+
+
+Για τη βασική κινησιολογία και τα animations του σώματος χρησιμοποιήθηκε η πλατφόρμα 
+\textit{Mixamo}, από την οποία εξήχθησαν αρχεία \textit{FBX} με προρυθμισμένες κινήσεις 
+όπως περπάτημα, τρέξιμο, idle και στροφές κεφαλιού. 
+Τα animations αυτά πραγματοποιήθηκαν \textit{retarget} στο armature του χαρακτήρα 
+εντός του Blender, προσαρμόζοντας τα keyframes ώστε να αποδίδουν ρεαλιστικά τις κινήσεις 
+βάσει της κλίμακας και της ανατομίας του μοντέλου.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{mixamo.png}
+    \caption{mixamo}
+    \label{fig:placeholder}
+\end{figure}
+
+
+
+
+\section{Ρουχισμός με Marvelous Designer}
+Για τη δημιουργία του ρουχισμού του χαρακτήρα χρησιμοποιήθηκε το λογισμικό 
+\textit{Marvelous Designer}, το οποίο επιτρέπει τον σχεδιασμό και την προσομοίωση 
+υφασμάτων με ρεαλιστική φυσική συμπεριφορά. 
+Στο πλαίσιο της εργασίας δημιουργήθηκε ένα λευκό φόρεμα--νυφικό με λεπτομέρειες από δαντέλα, 
+το οποίο σχεδιάστηκε εξολοκλήρου μέσα στο περιβάλλον του προγράμματος 
+μέσω του συστήματος \textit{2D Pattern Sewing}.
+
+Η διαδικασία περιλάμβανε τον σχεδιασμό των δισδιάστατων κομματιών του ενδύματος 
+(μπροστινό, πίσω μέρος, λουριά και στρώσεις υφάσματος), τη ραφή (\textit{Sewing}) 
+και την προσομοίωση πάνω στο σώμα του \textit{Genesis~9} χαρακτήρα, 
+ο οποίος είχε εισαχθεί ως \textit{avatar}. 
+Έγινε χρήση διαφορετικών υλικών (\textit{fabric presets}) για το κύριο ύφασμα και τη δαντέλα, 
+με λεπτομερή ρύθμιση των φυσικών ιδιοτήτων (\textit{shear, stretch, bending}) 
+προκειμένου να αποδοθεί ρεαλιστικά η πτώση και η υφή του υφάσματος.
+
+Μετά την ολοκλήρωση της προσομοίωσης, το τελικό ένδυμα εξήχθη σε μορφή 
+\textit{OBJ/FBX} με UVs και χάρτες υφών (\textit{Textures}), 
+ώστε να μπορεί να εισαχθεί και να προσαρμοστεί στο \textit{Blender}, 
+όπου πραγματοποιήθηκε περαιτέρω ρύθμιση υλικών και \textit{weight painting} 
+για σωστή αλληλεπίδραση με το rig του σώματος.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{whole_screen.png}
+    \caption{whole screen}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{clothes_front.png}
+    \caption{clothes front}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{clothes_closeup.png}
+    \caption{clothes closeup}
+    \label{fig:placeholder}
+\end{figure}
+
+
+
+
+
+
+
+
+
+\section{Motion Capture προσώπου και σώματος}
+
+
+Για την αποτύπωση ρεαλιστικής εκφραστικότητας στο πρόσωπο του χαρακτήρα, 
+χρησιμοποιήθηκε τεχνική \textit{Facial Motion Capture} μέσω του συστήματος 
+\textit{Rokoko Studio}. Η επιλογή επικεντρώθηκε αποκλειστικά στη σύλληψη των κινήσεων 
+του προσώπου, καθώς η σωματική κινησιολογία είχε ήδη παραχθεί μέσω \textit{Mixamo}.
+
+Η διαδικασία πραγματοποιήθηκε με τη χρήση της εφαρμογής \textit{Rokoko Face Capture} 
+σε κινητό \textit{iPhone}, λόγω της υποστήριξης κάμερας \textit{TrueDepth/LiDAR} 
+που απαιτείται για την ακριβή χαρτογράφηση εκφράσεων. 
+Η επιλογή αυτή έγινε για λόγους κόστους και ευκολίας, καθώς το σύστημα επιτρέπει 
+τη χρήση ενός μόνο κινητού τηλεφώνου χωρίς πρόσθετο εξοπλισμό, 
+παρέχοντας ικανοποιητικά αποτελέσματα για animation προσώπου.
+
+Καταγράφηκε ο μονόλογος της χαρακτήρα και το αρχείο εξήχθη από το \textit{Rokoko Studio} 
+σε μορφή \textit{Mixamo FBX} μέσω των \textit{Export Settings}. 
+Το αρχείο αυτό εισήχθη στο \textit{Blender}, όπου σε συνδυασμό με το πρόσθετο 
+\textit{FaceIt} πραγματοποιήθηκε η αυτόματη δημιουργία των απαραίτητων 
+\textit{ARKit 52 BlendShapes} σύμφωνα με τα πρότυπα της Apple.
+
+Στη συνέχεια, τα \textit{BlendShapes} εφαρμόστηκαν πάνω στο πρόσωπο του 
+\textit{Genesis~9} χαρακτήρα, και το \textit{Facial Mocap} από το αρχείο του 
+\textit{Rokoko} έγινε \textit{retarget} και \textit{bake} απευθείας πάνω στο rig. 
+Το αποτέλεσμα ήταν ένα ρεαλιστικό σετ εκφράσεων και κινήσεων προσώπου, 
+συγχρονισμένο με τον ηχογραφημένο μονόλογο της χαρακτήρα.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{rokoko face capture.png}
+    \caption{rokoko face capture}
+    \label{fig:placeholder}
+\end{figure}
+
+
+
+
+
+
+\section{Τεχνητή νοημοσύνη στο voice acting}
+Για την ηχητική απεικόνιση του χαρακτήρα και την ενίσχυση της αφηγηματικής εμπειρίας 
+του παιχνιδιού, χρησιμοποιήθηκαν τεχνολογίες \textit{AI Voice Generation}. 
+Αρχικά εξετάστηκε η χρήση της πλατφόρμας \textit{Sonantic}, η οποία όμως, 
+μετά την εξαγορά της από το \textit{Spotify}, δεν είναι πλέον διαθέσιμη για δημόσια χρήση. 
+Ως εναλλακτική, επιλέχθηκε η πλατφόρμα \textit{ElevenLabs}, 
+η οποία παρέχει υψηλής ποιότητας φωνητική σύνθεση βασισμένη σε νευρωνικά δίκτυα 
+και υποστηρίζει ρεαλιστικό \textit{emotion rendering} και προφορά.
+
+Μέσω του \textit{ElevenLabs}, δημιουργήθηκαν όλες οι φωνητικές ερμηνείες 
+του χαρακτήρα, συμπεριλαμβανομένων των βασικών διαλόγων και των εσωτερικών μονολόγων, 
+οι οποίοι χρησιμοποιήθηκαν στις σκηνές αφήγησης του παιχνιδιού. 
+Η ίδια πλατφόρμα αξιοποιήθηκε επίσης για τη δημιουργία δευτερευόντων 
+ηχητικών στοιχείων (\textit{SFX}), ambient ήχων και μουσικών θεμάτων, 
+συνεισφέροντας στη συνολική ηχητική ταυτότητα του έργου.
+
+Όλα τα παραγόμενα ηχητικά αρχεία εξήχθησαν σε μορφή \textit{WAV} 
+και ενσωματώθηκαν απευθείας στα αντίστοιχα \textit{Unity scripts} 
+μέσω του \textit{Audio Manager}, ώστε να συνδέονται δυναμικά 
+με τα γεγονότα του παιχνιδιού (triggers, subtitles, και scripted sequences). 
+Με τον τρόπο αυτό επιτεύχθηκε πλήρης αυτοματοποίηση της αναπαραγωγής 
+και συγχρονισμός με τα animation clips και το facial motion capture του χαρακτήρα.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{elevenLabs Voiceacting.png}
+    \caption{elevenLabs Voiceacting}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{ElevenLabs Music.png}
+    \caption{ElevenLabs Music}
+    \label{fig:placeholder}
+\end{figure}
+
+\section{Αξιολόγηση ρεαλισμού και τεχνικής ποιότητας}
+Συνολικά, η διαδικασία δημιουργίας του χαρακτήρα συνδύασε σύγχρονες τεχνικές 
+και εργαλεία από διαφορετικά στάδια της ψηφιακής παραγωγής, 
+προσεγγίζοντας μία ολοκληρωμένη ροή εργασίας (\textit{pipeline}) 
+που εκτείνεται από τη μοντελοποίηση μέχρι την τελική απεικόνιση στο \textit{Unity~HDRP}. 
+
+Η αρχική προσπάθεια μέσω φωτογραμμετρίας προσέφερε πολύτιμη εμπειρία, 
+αν και αντικαταστάθηκε από μία πιο σταθερή λύση βασισμένη στο \textit{Daz Studio}. 
+Η ενσωμάτωση εργαλείων όπως το \textit{Diffeomorphic}, το \textit{Rig~GNS} 
+και το \textit{FaceIt} εξασφάλισε τεχνική συνέπεια μεταξύ 
+των περιβαλλόντων \textit{Daz}, \textit{Blender} και \textit{Unity}, 
+ενώ η χρήση του \textit{Marvelous Designer} προσέδωσε ρεαλισμό στην απεικόνιση του ρουχισμού.  
+
+Η αξιοποίηση \textit{Rokoko Studio} για καταγραφή εκφράσεων προσώπου 
+και \textit{ElevenLabs} για δημιουργία φωνής με τεχνητή νοημοσύνη 
+συνέβαλαν καθοριστικά στη ζωντάνια και συναισθηματική πειστικότητα του τελικού αποτελέσματος. 
+Τέλος, η τεχνική αξιολόγηση στο περιβάλλον \textit{Unity HDRP} 
+επιβεβαίωσε ότι το μοντέλο και τα εφέ μπορούν να αποδοθούν σε πραγματικό χρόνο 
+με υψηλό επίπεδο ποιότητας, καθιστώντας τον χαρακτήρα πλήρως λειτουργικό 
+και αισθητικά ολοκληρωμένο.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Bride in Unity face.png}
+    \caption{Bride in Unity face}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Bride in Unity body.png}
+    \caption{Bride in Unity body}
+    \label{fig:placeholder}
+\end{figure}
+
+%---------------- ΚΕΦΑΛΑΙΟ 8 ----------------------------
+\chapter{Αποτελέσματα και Συζήτηση}
+\section{Αξιολόγηση τελικών σκηνών}
+
+Ο διάδρομος λειτούργησε ως μεταβατικό και αφηγηματικό σημείο ανάμεσα στα επίπεδα, 
+με το \textit{diegetic UI} του tutorial να καθοδηγεί τον παίκτη για βασικές ενέργειες, 
+όπως το άνοιγμα των θυρών. 
+Παρότι απλός, ο χώρος αποδίδει σωστά την ατμόσφαιρα και οπτικά με ικανοποίησε πλήρως.
+
+Η σκηνή του δρόμου λειτούργησε σταθερά και αποδοτικά, 
+με φωτισμό, αντανακλάσεις και post-processing που έδεσαν αρμονικά 
+με τον χαρακτήρα και τα animations του. 
+Το αποτέλεσμα ήταν ρεαλιστικό και τεχνικά ισορροπημένο.
+
+Η σκηνή του δάσους, με τα \textit{photogrammetry assets}, 
+το \textit{terrain}, το \textit{foliage} και το \textit{water system}, 
+ανέδειξε περισσότερο τη δυνατότητα εξερεύνησης και τη φυσική αισθητική του περιβάλλοντος. 
+Και οι τρεις σκηνές λειτούργησαν όπως σχεδιάστηκε εξαρχής, 
+προσφέροντας συνολικά ένα αποτέλεσμα που θεωρώ επιτυχημένο 
+τόσο οπτικά όσο και τεχνικά.
+\section{Απόδοση και οπτικά benchmarks}
+Για την αξιολόγηση της απόδοσης των σκηνών πραγματοποιήθηκαν μετρήσεις 
+μέσα από τα \textit{HDRP Display Stats} του Unity, 
+εξετάζοντας την απόκριση GPU και CPU στα τρία προφίλ ποιότητας: 
+\textit{Performant}, \textit{Balanced} και \textit{High Fidelity}. 
+Για κάθε preset καταγράφηκαν δύο χαρακτηριστικά σημεία,
+ένα «καλό» (\textit{Good}) με υψηλότερη απόδοση και ένα «βαρύ» (\textit{Bad}) 
+με αυξημένο υπολογιστικό φόρτο.
+
+Στη σκηνή του δρόμου, οι επιδόσεις κυμάνθηκαν μεταξύ 26–56~FPS για το \textit{Performant} 
+και περίπου 14–35~FPS στο \textit{High}. 
+Η σκηνή είναι κυρίως \textit{GPU-bound}, 
+με τις μεγαλύτερες πτώσεις καρέ να εμφανίζονται σε περιοχές 
+με πολλές αντανακλάσεις, μικρές πηγές φωτός και έντονο SSR/SSGI. 
+Στα καλύτερα σημεία, ο φωτισμός και τα volumetrics αποδίδουν ομαλά, 
+δίνοντας ένα σταθερό και οπτικά ευχάριστο αποτέλεσμα. 
+Συνολικά, τα προφίλ \textit{Performant} και \textit{Balanced} 
+κράτησαν μια ισορροπία ανάμεσα στην ποιότητα και στη σταθερότητα.
+
+Στη σκηνή του δάσους, η απόδοση ήταν γενικά υψηλότερη στα «ελαφρύτερα» πλάνα, 
+φτάνοντας έως και 100~FPS στα προφίλ χαμηλής ποιότητας, 
+ενώ στα πιο πυκνά σημεία με πλούσιο \textit{foliage}, νερό και volumetric fog 
+παρατηρήθηκαν πτώσεις έως περίπου 20~FPS. 
+Οι σκηνές αυτές είναι επίσης \textit{GPU-bound}, 
+καθώς το overdraw από τη βλάστηση και το νερό επιβαρύνει σημαντικά 
+την κάρτα γραφικών. 
+Η βελτιστοποίηση μείωσης της πυκνότητας χόρτου, του range του fog 
+και των volumetric παραμέτρων βελτίωσε αισθητά τη σταθερότητα του framerate.
+
+Συνοψίζοντας, οι μετρήσεις έδειξαν ότι το παιχνίδι αποδίδει 
+με συνέπεια σε όλα τα presets, 
+με τα \textit{Performant} και \textit{Balanced} να προσφέρουν 
+την καλύτερη εμπειρία για συστήματα μεσαίας ισχύος. 
+Το \textit{High Fidelity} προφίλ αποδίδει μεν πιο ρεαλιστικό αποτέλεσμα, 
+αλλά με εμφανή πτώση καρέ στις πιο βαριές σκηνές. 
+Σε κάθε περίπτωση, η εμπειρία παραμένει ομαλή και τεχνικά αξιόπιστη 
+με βάση τους στόχους της εργασίας.
+
+\section{Τεχνολογικές επιλογές και αναστοχασμός}
+Κατά τη διάρκεια της ανάπτυξης του έργου έγιναν πολλές τεχνολογικές επιλογές, 
+οι οποίες καθόρισαν σε μεγάλο βαθμό τόσο τη ροή εργασίας όσο και το τελικό αποτέλεσμα. 
+Η επιλογή της \textit{Unity~6 HDRP} αποδείχθηκε σωστή, 
+καθώς πρόσφερε ευελιξία, ρεαλιστικό φωτισμό και εύκολη ενσωμάτωση 
+εργαλείων τρίτων, ενώ παράλληλα επέτρεψε την ανάπτυξη και βελτιστοποίηση 
+σε διαφορετικά προφίλ απόδοσης. 
+Το σύστημα \textit{HDRP Volumes}, τα υλικά \textit{PBR} και τα εργαλεία 
+για post-processing έδωσαν τη δυνατότητα να δημιουργηθούν 
+ατμοσφαιρικές σκηνές με κινηματογραφική αίσθηση.
+
+Η χρήση του \textit{Daz~Studio} για τη δημιουργία του βασικού χαρακτήρα 
+ήταν μία πρακτική και αποδοτική λύση σε σχέση με τον χρόνο και το κόστος, 
+δίνοντας ικανοποιητικό αποτέλεσμα χωρίς πλήρη μοντελοποίηση από το μηδέν. 
+Ο συνδυασμός του με το \textit{Blender} και πρόσθετα όπως το 
+\textit{Diffeomorphic}, το \textit{Rig~GNS} και το \textit{FaceIt} 
+έδειξε ότι είναι εφικτή μία ολοκληρωμένη ροή εργασίας χαρακτήρων 
+με εργαλεία ανοιχτού ή χαμηλού κόστους. 
+Παρόμοια, το \textit{Marvelous Designer} λειτούργησε ιδανικά 
+στην προσομοίωση ρούχων, ενώ το \textit{Rokoko Studio} 
+και το \textit{ElevenLabs} προσέφεραν προσβάσιμες λύσεις 
+για animation προσώπου και voice acting αντίστοιχα.
+
+Αναστοχαστικά, θεωρώ ότι για τους σκοπούς και τις ανάγκες της εργασίας 
+ίσως να με εξυπηρετούσε καλύτερα η \textit{Unreal Engine}, 
+καθώς προσφέρει ενσωματωμένα συστήματα όπως το \textit{MetaHuman Creator} 
+για παραγωγή ρεαλιστικών χαρακτήρων, 
+καθώς και τεχνολογίες όπως \textit{Nanite} και \textit{Lumen}, 
+που θα απλοποιούσαν αρκετά τη διαδικασία και θα βελτίωναν την απόδοση. 
+Επιπλέον, η ύπαρξη διαφορετικού υλικού, όπως μιας κάρτας \textit{RTX}, 
+θα μου επέτρεπε να αξιοποιήσω πλήρως τις δυνατότητες του 
+\textit{ray tracing} και των upscaling τεχνολογιών τύπου \textit{DLSS}, 
+εμπλουτίζοντας ακόμη περισσότερο το τελικό οπτικό αποτέλεσμα.
+
+Παρόλα αυτά, η επιλογή της Unity λειτούργησε θετικά για τον στόχο της εργασίας, 
+αφού μου επέτρεψε να συνδυάσω πολλά εργαλεία, να πειραματιστώ 
+με τεχνικές και να κατανοήσω σε βάθος τη διαδικασία παραγωγής 
+ενός ρεαλιστικού 3D περιβάλλοντος σε πραγματικό χρόνο. 
+Η εμπειρία αυτή ενίσχυσε την τεχνογνωσία μου και απέδειξε 
+ότι με σωστή οργάνωση, προσαρμοστικότητα και επιμονή, 
+είναι εφικτό να παραχθεί ένα πλήρες, τεχνικά άρτιο και καλλιτεχνικά συνεκτικό αποτέλεσμα.
+
+\section{Προβλήματα και τρόποι αντιμετώπισης}
+Κατά την ανάπτυξη του έργου προέκυψαν αρκετά τεχνικά ζητήματα, 
+τόσο στη ροή εργασίας όσο και μέσα στις ίδιες τις σκηνές. 
+Πολλά από αυτά είχαν να κάνουν με θέματα απόδοσης, 
+φωτισμού, συγχρονισμού των animations και σταθερότητας του project.
+
+Ένα από τα πιο συχνά προβλήματα ήταν οι ασυμβατότητες ανάμεσα στα διαφορετικά εργαλεία, 
+κυρίως κατά τη διαδικασία μεταφοράς δεδομένων από το \textit{Daz Studio} 
+στο \textit{Blender} και από εκεί στο \textit{Unity}. 
+Σε αρκετές περιπτώσεις χρειάστηκε επανεισαγωγή ή ρύθμιση των rigs και των materials, 
+ιδίως όταν τα μοντέλα εμφάνιζαν σφάλματα στην κλίμακα, στους χάρτες υφής 
+ή στα \textit{blendshapes}. 
+Η χρήση του πρόσθετου \textit{Diffeomorphic} βοήθησε σημαντικά 
+στη σωστή μεταφορά των δεδομένων, ενώ το \textit{FaceIt} 
+διευκόλυνε την οργάνωση των facial animations.
+
+Σε επίπεδο απόδοσης, το HDRP παρουσίασε αρκετές προκλήσεις. 
+Οι σκηνές με έντονα volumetric εφέ, reflections ή πυκνή βλάστηση 
+είχαν σημαντικές διακυμάνσεις στα καρέ ανά δευτερόλεπτο (FPS). 
+Για να αντιμετωπιστεί αυτό, έγιναν δοκιμές με διαφορετικά \textit{presets} ποιότητας, 
+απενεργοποιήθηκαν δευτερεύοντα εφέ και ρυθμίστηκαν εκ νέου 
+οι παράμετροι των \textit{Global Volumes}. 
+Η δημιουργία τριών ξεχωριστών προφίλ (\textit{High Fidelity}, 
+\textit{Balanced}, \textit{Performant}) 
+βοήθησε στη σταθεροποίηση του project και στην προσαρμογή του 
+σε διαφορετικά επίπεδα υλικού.
+
+Επίσης, σε κάποιες περιπτώσεις υπήρχαν προβλήματα συγχρονισμού 
+ανάμεσα στο facial motion capture του \textit{Rokoko} 
+και τα ηχητικά αρχεία από το \textit{ElevenLabs}.
+
+
+Τέλος, σημειώθηκαν ορισμένες αστάθειες και crashes μέσα στο Unity, 
+κυρίως σε μεγάλα builds ή κατά τη διάρκεια του baking φωτισμού. 
+Η τακτική δημιουργία αντιγράφων ασφαλείας του project, 
+η σωστή οργάνωση των φακέλων και η χρήση του \textit{Version Control} 
+διασφάλισαν ότι καμία σημαντική πρόοδος δεν χάθηκε.
+
+Παρότι τα παραπάνω προβλήματα καθυστέρησαν ορισμένες φάσεις, 
+η διαδικασία αντιμετώπισής τους συνέβαλε ουσιαστικά στην καλύτερη κατανόηση 
+της μηχανής και στη βελτίωση των τεχνικών δεξιοτήτων μου. 
+Το τελικό αποτέλεσμα αποδεικνύει ότι με υπομονή, πειραματισμό 
+και σωστό σχεδιασμό, ακόμη και σύνθετα προβλήματα μπορούν να επιλυθούν 
+με επιτυχία σε ένα ανεξάρτητο έργο ανάπτυξης.
+
+%---------------- ΚΕΦΑΛΑΙΟ 9 ----------------------------
+\chapter{Συμπεράσματα και Μελλοντική Έρευνα}
+\section{Σύνοψη πτυχιακής}
+Η παρούσα πτυχιακή εργασία είχε ως στόχο τη μελέτη και υλοποίηση 
+της διαδικασίας ανάπτυξης ενός παιχνιδιού σε περιβάλλον 
+\textit{Unity~6 HDRP}, με έμφαση στη δημιουργία ρεαλιστικού χαρακτήρα, 
+στην αξιοποίηση σύγχρονων τεχνολογιών και στην εφαρμογή 
+καλλιτεχνικών και τεχνικών αρχών που προσεγγίζουν 
+την κινηματογραφική απεικόνιση.
+
+Η εργασία κάλυψε όλα τα στάδια της παραγωγής: 
+από τη σύλληψη και τον σχεδιασμό των σκηνών, 
+μέχρι τη δημιουργία του χαρακτήρα με \textit{Daz Studio}, 
+την επεξεργασία και το \textit{rigging} στο \textit{Blender}, 
+την προσομοίωση ρούχων με \textit{Marvelous Designer}, 
+το facial motion capture μέσω \textit{Rokoko}, 
+και το voice acting με \textit{ElevenLabs}. 
+Όλα τα παραπάνω συνδυάστηκαν μέσα στην Unity, 
+όπου αναπτύχθηκαν τρεις κύριες σκηνές — 
+ο διάδρομος, ο δρόμος και το δάσος — 
+καθεμία με διαφορετικό χαρακτήρα και τεχνολογικό προσανατολισμό.
+
+Μέσα από αυτή τη διαδικασία, επιτεύχθηκε ένας ολοκληρωμένος κύκλος παραγωγής, 
+που απέδειξε πως ακόμη και με περιορισμένους πόρους, 
+είναι δυνατή η ανάπτυξη ενός τεχνικά και αισθητικά άρτιου αποτελέσματος. 
+Η Unity λειτούργησε ως ένα ευέλικτο εργαλείο πειραματισμού, 
+ενώ ο συνδυασμός ανοικτών ή προσιτών τεχνολογιών 
+παρείχε την απαιτούμενη ελευθερία για δοκιμές και δημιουργικότητα.
+
+Σε επίπεδο γνώσης, η εργασία προσέφερε ουσιαστική εμπειρία 
+στην κατανόηση του τρόπου με τον οποίο συνδέονται 
+οι τεχνολογίες γραφικών, animation και ήχου σε ένα ενιαίο περιβάλλον. 
+Ταυτόχρονα, ανέδειξε τη σημασία του σωστού σχεδιασμού pipeline, 
+της βελτιστοποίησης και της διαχείρισης σύνθετων τεχνικών διαδικασιών. 
+
+Συνολικά, η πτυχιακή αυτή αποτέλεσε μια ολοκληρωμένη εμπειρία 
+τόσο σε τεχνικό όσο και σε δημιουργικό επίπεδο, 
+ενώ άνοιξε νέους ορίζοντες για μελλοντική ενασχόληση 
+με το game development, τα 3D γραφικά και τις διαδραστικές εφαρμογές.
+\section{Δυνατότητες βελτίωσης και επεκτάσεων}
+Αν υπήρχε περισσότερος χρόνος και ισχυρότερο τεχνικό υπόβαθρο, 
+θα μπορούσαν να υλοποιηθούν αρκετές βελτιώσεις και επεκτάσεις 
+τόσο σε επίπεδο περιεχομένου όσο και σε τεχνολογική βάση.
+
+Αρχικά, θα ήταν ενδιαφέρον να ενσωματωθούν πιο δυναμικά στοιχεία 
+στο gameplay, όπως βασικές μηχανικές αλληλεπίδρασης, 
+προαιρετικοί διάλογοι ή ένα απλό σύστημα επιλογών, 
+ώστε ο παίκτης να μπορεί να επηρεάζει ελαφρά τη ροή των σκηνών. 
+Παράλληλα, θα μπορούσε να αναπτυχθεί ένα πλήρες 
+\textit{in–game settings menu} για αλλαγή γραφικών και ήχου σε πραγματικό χρόνο, 
+βελτιώνοντας την προσβασιμότητα και τη συνολική εμπειρία χρήστη.
+
+Σε τεχνικό επίπεδο, σημαντική βελτίωση θα μπορούσε να προκύψει 
+με την αξιοποίηση συστημάτων όπως το \textit{ray tracing}, 
+το \textit{DLSS} και το \textit{FSR}, 
+τα οποία θα αναβάθμιζαν δραστικά την ποιότητα φωτισμού και την απόδοση. 
+Η ύπαρξη κάρτας γραφικών τύπου \textit{RTX} 
+θα επέτρεπε επίσης πιο ακριβή σκίαση, 
+αντανακλάσεις και καλύτερη διαχείριση του παγκόσμιου φωτισμού.  
+
+Επιπλέον, η μετάβαση του project σε \textit{Unreal Engine} 
+θα άνοιγε τον δρόμο για ακόμα πιο προηγμένα συστήματα ρεαλισμού, 
+όπως το \textit{MetaHuman Creator}, το \textit{Nanite} και το \textit{Lumen}, 
+δίνοντας περισσότερη λεπτομέρεια και σταθερότητα στα μοντέλα και τις σκηνές.
+
+Σε καλλιτεχνικό επίπεδο, θα μπορούσαν να επεκταθούν οι σκηνές 
+με περισσότερα περιβάλλοντα, φωτογραμμετρικά assets 
+και μικρές αφηγηματικές στιγμές που θα εμπλουτίζουν το συναίσθημα του παιχνιδιού. 
+Επιπλέον, θα μπορούσε να αναπτυχθεί ένα πιο προχωρημένο 
+σύστημα facial animation ή ακόμη και πλήρες \textit{lip–sync} 
+με \textit{AI–driven} προσαρμογή στην ομιλία.
+
+Συνολικά, το project έχει δημιουργηθεί με τρόπο που επιτρέπει 
+την εύκολη συνέχιση και αναβάθμισή του στο μέλλον. 
+Οι βάσεις που τέθηκαν σε αυτή την πτυχιακή μπορούν να αποτελέσουν 
+το θεμέλιο για ένα ακόμη πιο ώριμο και τεχνικά εξελιγμένο έργο, 
+είτε ως ακαδημαϊκή συνέχεια είτε ως ανεξάρτητο καλλιτεχνικό project.
+\section{Πιθανές εφαρμογές και μελλοντική κατεύθυνση}
+Η παρούσα εργασία μπορεί να αποτελέσει αφετηρία για περαιτέρω ανάπτυξη 
+και εμβάθυνση σε τομείς όπως το \textit{game development}, 
+η εικονική αφήγηση και το \textit{real–time rendering}. 
+Το έργο θα μπορούσε να εξελιχθεί σε ένα ολοκληρωμένο 
+διαδραστικό \textit{walking simulator} ή να αξιοποιηθεί 
+ως πλαίσιο πειραματισμού με τεχνικές φωτισμού, 
+AI animation και φωτογραμμετρίας.
+
+Σε ερευνητικό επίπεδο, ανοίγονται προοπτικές για μελέτη 
+της σχέσης μεταξύ ρεαλισμού, εμπειρίας χρήστη και τεχνητής νοημοσύνης 
+μέσα σε διαδραστικά περιβάλλοντα. 
+Παράλληλα, η εμπειρία που αποκτήθηκε δημιουργεί γερές βάσεις 
+για μελλοντική εξειδίκευση σε πεδία όπως 
+τα 3D γραφικά, η ενοποίηση τεχνολογιών και η ψηφιακή τέχνη.
+%---------------- Appendices ----------------------------
+\appendix
+\chapter{Παράρτημα A: Σύνδεσμοι σε GitHub / YouTube / Sketchfab}
+
+\begin{itemize}
+    \item \href{https://github.com/IoannisTsakiltsidis/Thesis_Scripts}{https://github.com/IoannisTsakiltsidis/Thesis_Scripts}
+    \item \href{https://sketchfab.com/IoannisTsakiltsidis}{https://sketchfab.com/IoannisTsakiltsidis} 
+    \item \href{https://www.youtube.com/channel/UC7WlqzPQBCW8SFafFIC-IaA}{https://www.youtube.com/channel/UC7WlqzPQBCW8SFafFIC-IaA}
+\end{itemize}
+%---------------- Bibliography --------------------------
+\chapter{ΒΙΒΛΙΟΓΡΑΦΙΑ}
+\begin{itemize}
+    \item ReferencesSzeliski, R. (2021). \textit{Computer Vision: Algorithms and Applications 2nd Edition}. Retrieved from https://szeliski.org/Book,
+
+    \item Kerbl, B., Kopanas, G., Leimkuehler, T., \& Drettakis, G. (8 2023). 3D Gaussian Splatting for Real-Time Radiance Field Rendering. \textit{ACM Transactions on Graphics}, \textit{42}. doi:10.1145/3592433
+
+    \item Mildenhall, B., Srinivasan, P. P., Tancik, M., Barron, J. T., Ramamoorthi, R., \& Ng, R. (8 2020). \textit{NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis}. Retrieved from http://arxiv.org/abs/2003.08934
+
+    \item Thobari, A. J. A., Sa’adah, U., Hardiansyah, F. F., \& Putra, R. C. A. (2021). Toolchain Development for Midcore Scale Game Products through DevOps and CI/CD Approach. \textit{Proceedings - International Conference on Informatics and Computational Sciences}, \textit{2021-Noember}, 81–86. doi:10.1109/ICICoS53627.2021.9651738
+
+    \item Jurvanen, A. (n.d.). \textit{Automated Testing with Unity}.
+
+    \item Sakharov, V. (2019). \textit{WORKFLOW OPTIMISATION IN UNITY ENGINE}.
+
+    \item Jussila, T. (2021). \textit{DevOps in mobile game development An action research on applying DevOps practices in a mobile game development project Engineering and Technology Technological Competence Management}.
+
+    \item Tyagi, M., Sil, A., Majumdar, R., Srivastava, A., \& Mishra, V. P. (2019). \textit{Categorization of Gaming Attributes in Devops Using Structure Equation Modeling}. IEEE.
+
+    \item da Silva Lima, G. B., de Araújo, C. S., Rodriguez, L. C., Pinheiro, C. L., \& da Silva Junior, J. M. (2021). \textit{DEVOPS METHODOLOGY IN GAME DEVELOPMENT WITH UNITY3D}.
+
+    \item Cho, J., \& Ali, K. (2023). Exploring Quality Assurance Practices and Tools for Indie Games. \textit{Proceedings - 2023 IEEE/ACM 7th International Workshop on Games and Software Engineering, GAS 2023}, 16–24. doi:10.1109/GAS59301.2023.00010
+
+    \item Akenine-M¨oller, T., Haines, E., Hoﬀman, N., Pesce, A., Iwanicki, M., \& Hillaire, S. (2018). \textit{Real-Time Rendering Fourth Edition}.
+
+    \item Tosi, F., Zurlo, F., di Milano, P., Jinyi, I. Z., \& Amadori, M. P. (2022). \textit{Advances in Design and Digital Communication II, Proceedings of the 5th International Conference on Design and Digital Communication}. http://www.springer.com/series/16270
+
+    \item Grande, R., Albusac, J., Vallejo, D., Glez-Morcillo, C., \& Castro-Schez, J. J. (7 2024). Performance Evaluation and Optimization of 3D Models from Low-Cost 3D Scanning Technologies for Virtual Reality and Metaverse E-Commerce. \textit{Applied Sciences (Switzerland)}, \textit{14}. doi:10.3390/app14146037
+
+    \item Song, L. (2023). Research of 3D Virtual Characters Reconstructions Based on NeRF. \textit{Journal of Electronics and Information Science}, \textit{8}. doi:10.23977/jeis.2023.080606
+
+    \item Goos, G., \& Hartmanis, J. (2025). \textit{HCI in Games 7th International Conference, HCI-Games 2025} (Vol. 15816; X. Fang, Ed.). doi:10.1007/978-3-031-92578-8
+
+    \item Kryvoshei, O., Kamencay, P., Hlavata, R., Stech, A., \& Benco, M. (5 2025). Comparative Assessment of Modern Approaches for 3D Reconstruction. \textit{2025 35th International Conference Radioelektronika (RADIOELEKTRONIKA)}, 1–5. doi:10.1109/RADIOELEKTRONIKA65656.2025.11008410
+
+    \item Dalal, A., Hagen, D., Robbersmyr, K. G., \& Knausgard, K. M. (2024). Gaussian Splatting: 3D Reconstruction and Novel View Synthesis: A Review. \textit{IEEE Access}, Vol. 12, pp. 96797–96820. doi:10.1109/ACCESS.2024.3408318
+
+    \item Wu, F., \& Chen, Y. (2024). \textit{FruitNinja: 3D Object Interior Texture Generation with Gaussian Splatting}. Retrieved from https://fanguw.github.io/FruitNinja3D.
+
+    \item Sun, G. (2023). \textit{Quantifying, Characterizing, and Leveraging Cross-Disciplinary Dependencies Empirical Studies from a Video Game Development Setting}.
+
+    \item Turunen, J. (2017). \textit{The good, the bad and the unpleasant - a study of graphical user interfaces in video games}.
+
+    \item Bernhaupt, R., Karat, J., Vanderdonckt, J., Calvary, G., Feiner, S., Jacob, R., … Ziegert, T. (2010). \textit{Evaluating User Experience in Games, Concepts and Methods}. Retrieved from http://www.springer.com/series/6033
+
+    \item Palmquist, A., Jedel, I., \& Goethe, O. (2024). \textit{Universal Design in Video Games}. doi:10.1007/978-3-031-30595-5
+
+    \item Khazanehdarloo, A., \& Mohamed, K. (2023). \textit{The Impact of Diegetic and Non-diegetic User Interfaces on the Player Experience in FPS Games}.
+
+    \item Wikstrom, G. (2022). \textit{INTERPRETATION OF UI ICON DESIGN}.
+
+    \item Muhammad, R., \& Ullah, H. (2024). \textit{Strategies for Effective Management and Integration in Both Software and Game Development}.
+
+    \item Andersson, R. (2024). \textit{Effects of Diegetic User Interface on Immersion and User Experience in Video Games}.
+
+    \item Kristiadi, D. P., Udjaja, Y., Supangat, B., Prameswara, R. Y., Leslie, H., Warnars, H. S., … Kusakunniran, W. (2017). \textit{THE EFFECT OF UI,UX and GX ON VIDEO GAMES}. Retrieved from https://goo.gl/forms/vaOrDhimgUf1iR2r1
+
+    \item Giordano, A., Russo, M., \& Spallone, R. (2024). \textit{Digital Innovations in Architecture, Engineering and Construction Advances in Representation New AI-and XR-Driven Transdisciplinarity}.
+
+    \item Itkonen, O. (2021). \textit{THE CONCEPT OF “EARLY ACCESS” FROM GAME DEVELOPERS’ PERSPECTIVE}.
+
+    \item Doval, G., \& Silva, E. D. A. (2019). \textit{A SEMIOTIC AND USABILITY ANALYSIS OF DIEGETIC UI: METRO-LAST LIGHT}.
+
+    \item Shaker, N., Togelius, J., \& Nelson, M. J. (2016). \textit{Computational Synthesis and Creative Systems Procedural Content Generation in Games}. http://www.springer.com/series/15219
+
+    \item Gregory, J. (2014). \textit{Game Engine Architecture}.
+
+    \item Salomoni, P., Prandi, C., Roccetti, M., Casanova, L., Marchetti, L., \& Marfia, G. (6 2017). Diegetic user interfaces for virtual environments with HMDs: a user experience study with oculus rift. \textit{Journal on Multimodal User Interfaces}, \textit{11}, 173–184. doi:10.1007/s12193-016-0236-5
+
+    \item Iacovides, I., Cox, A., Kennedy, R., Cairns, P., \& Jennett, C. (10 2015). Removing the HUD: The impact of non-diegetic game elements and expertise on player involvement. \textit{CHI PLAY 2015 - Proceedings of the 2015 Annual Symposium on Computer-Human Interaction in Play}, 13–22. doi:10.1145/2793107.2793120
+
+    \item Lammers, K. (2013). \textit{Unity Shaders and effects cookbook}. Packt Pub.
+
+    \item Nystrom, \& Robert. (2014). \textit{Game Programming Patterns}.
+
+    \item Champion, E. M. (7 2021). \textit{Virtual Heritage: A Concise Guide}. doi:10.5334/bck
+
+    \item Tuori, V. (2022). \textit{Advantages of Photogrammetry in cre-ating Photorealistic 3D assets for Game Development using only Freeware: In-die’s Delight}.
+
+    \item Vajak, D., \& Livada, C. (2017). \textit{Combining Photogrammetry, 3D Modeling and Real Time Information Gathering for Highly Immersive VR Experience}. IEEE.
+
+    \item Short, T., \& Adams, T. (2017). \textit{Procedural Generation in Game Design}.
+
+    \item Foster, S., \& Halbstein, D. (2014). \textit{Integrating 3D Modeling, Photogrammetry and Design}. Retrieved from http://www.springer.com/series/10028
+
+    \item Statham, N. (5 2020). Use of Photogrammetry in Video Games: A Historical Overview. \textit{Games and Culture}, \textit{15}, 289–307. doi:10.1177/1555412018786415
+
+    \item Ryan, J. (2019). \textit{Photogrammetry for 3D Content Development in Serious Games and Simulations}.
+\end{itemize}
+
+ 
+
+\end{document}
